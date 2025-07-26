@@ -138,6 +138,9 @@ export const searchAPI = {
   }) => api.get('/search', { params: { q: query, ...params } }),
 
   searchScammers: (query: string) => api.get('/search/scammers', { params: { q: query } }),
+  
+  // Get statistics
+  getStatistics: () => api.get('/search/stats'),
 };
 
 // Health check

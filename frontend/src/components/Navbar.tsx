@@ -22,7 +22,7 @@ import {
   Search,
   ReportProblem,
   Person,
-  Dashboard,
+  Assessment,
   Menu,
   Close,
 } from '@mui/icons-material';
@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
     { path: '/', label: 'Home', icon: <Home /> },
     { path: '/search', label: 'Search', icon: <Search /> },
     { path: '/report', label: 'Report', icon: <ReportProblem /> },
-    { path: '/dashboard', label: 'Dashboard', icon: <Dashboard /> },
+    { path: '/dashboard', label: 'Statistics', icon: <Assessment /> },
     { path: '/login', label: 'Sign In', icon: <Person /> },
   ];
 
