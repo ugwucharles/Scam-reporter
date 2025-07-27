@@ -1,7 +1,22 @@
 import axios from 'axios';
 
-// Force localhost to avoid IP resolution issues
-const API_BASE_URL = 'http://localhost:5000/api';
+// API Base URL - automatically detects environment
+const getApiBaseUrl = () => {
+  // Check if we're in development or production
+  if (process.env.NODE_ENV === 'production') {
+    // Production: Use environment variable or default to your deployed backend
+    return process.env.REACT_APP_API_URL || 'https://scam-reporter-backend.onrender.com/api';
+  } else {
+    // Development: Use localhost
+    return process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  }
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// Debug logging to see which URL is being used
+console.log('🌐 API Base URL:', API_BASE_URL);
+console.log('🔧 Environment:', process.env.NODE_ENV);
 
 // Create axios instance
 const api = axios.create({
