@@ -73,10 +73,13 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB');
     const PORT = process.env.PORT || 5000;
-    const HOST = 'localhost';
+    const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
     app.listen(PORT, HOST, () => {
       console.log(`Server running on http://${HOST}:${PORT}`);
       console.log(`Local: http://localhost:${PORT}`);
+      if (process.env.NODE_ENV === 'production') {
+        console.log('Production server bound to 0.0.0.0 for external access');
+      }
     });
   })
   .catch((error) => {
