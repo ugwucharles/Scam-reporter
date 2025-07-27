@@ -9,24 +9,27 @@ require('dotenv').config();
 const authRoutes = require('./routes/auth');
 const scamRoutes = require('./routes/scams');
 const searchRoutes = require('./routes/search');
+const websiteCheckerRoutes = require('./routes/websiteChecker');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginEmbedderPolicy: false
+}));
 
-// Rate limiting
+// Rate limiting (temporarily increased for testing)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 1000 // temporarily increased limit for testing
 });
 app.use(limiter);
 
-// CORS
+// CORS - Allow all origins for development
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? 'your-production-domain.com' 
-    : ['http://localhost:3000', 'http://localhost:3001', 'http://127.0.0.1:3000', 'http://127.0.0.1:3001'],
+  origin: true, // Allow all origins in development
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -43,6 +46,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/scams', scamRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/website-checker', websiteCheckerRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -68,8 +73,10 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('Connected to MongoDB');
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    const HOST = 'localhost';
+    app.listen(PORT, HOST, () => {
+      console.log(`Server running on http://${HOST}:${PORT}`);
+      console.log(`Local: http://localhost:${PORT}`);
     });
   })
   .catch((error) => {

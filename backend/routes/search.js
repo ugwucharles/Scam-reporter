@@ -42,7 +42,8 @@ router.get('/', optionalAuth, [
     } = req.query;
 
     // Build search query
-    const searchQuery = { status: 'approved' };
+    // Temporarily include all statuses for testing
+    const searchQuery = { status: { $in: ['approved', 'pending'] } };
     const orConditions = [];
 
     // Text search
@@ -94,7 +95,7 @@ router.get('/', optionalAuth, [
     }
 
     // If no search criteria provided, return error
-    if (!q && !email && !phone && !website && !businessName && !scamType) {
+    if (!q && !email && !phone && !website && !businessName) {
       return res.status(400).json({
         message: 'At least one search criteria must be provided'
       });

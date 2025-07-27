@@ -15,6 +15,8 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import ReportDetails from './pages/ReportDetails';
 import Dashboard from './pages/Dashboard';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Create theme matching PalmPay's design system
 const theme = createTheme({
@@ -247,7 +249,9 @@ function App() {
                   <Route path="/register" element={<Register />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/report/:id" element={<ReportDetails />} />
+<Route path="/report/:id" element={<ReportDetails />} />
+<Route path="/admin/login" element={<AdminLogin />} />
+<Route path="/admin/dashboard" element={<AdminDashboard />} />
                 </Routes>
               </motion.main>
               <Footer />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Container,
   Typography,
@@ -9,6 +9,7 @@ import {
   IconButton,
   useTheme,
   alpha,
+  CircularProgress,
 } from '@mui/material';
 import {
   Security,
@@ -22,9 +23,33 @@ import {
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { websiteCheckerAPI } from '../services/api';
+import WebsiteCheckerResult from '../components/WebsiteCheckerResult';
 
 const Home: React.FC = () => {
   const theme = useTheme();
+  const [websiteUrl, setWebsiteUrl] = useState<string>('');
+  const [isChecking, setIsChecking] = useState<boolean>(false);
+  const [checkResult, setCheckResult] = useState<any>(null);
+
+  const handleWebsiteCheck = async () => {
+    if (!websiteUrl.trim()) return;
+    
+    setIsChecking(true);
+    setCheckResult(null);
+    
+    try {
+      const response = await websiteCheckerAPI.checkWebsite(websiteUrl.trim());
+      setCheckResult(response.data);
+    } catch (error: any) {
+      setCheckResult({
+        error: error.response?.data?.error || 'Failed to check website. Please try again.',
+        safe: false
+      });
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   const features = [
     {
@@ -1057,7 +1082,15 @@ const Home: React.FC = () => {
               <Box sx={{ flex: 1, width: '100%' }}>
                 <input
                   type="url"
+                  value={websiteUrl}
+                  onChange={(e) => setWebsiteUrl(e.target.value)}
                   placeholder="Enter website URL (e.g., https://example.com)"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !isChecking) {
+                      handleWebsiteCheck();
+                    }
+                  }}
+                  disabled={isChecking}
                   style={{
                     width: '100%',
                     padding: '16px 20px',
@@ -1065,14 +1098,17 @@ const Home: React.FC = () => {
                     border: '2px solid #e2e8f0',
                     borderRadius: '12px',
                     outline: 'none',
-                    backgroundColor: 'white',
+                    backgroundColor: isChecking ? '#f8fafc' : 'white',
                     color: '#1e293b',
                     transition: 'all 0.3s ease',
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)',
+                    opacity: isChecking ? 0.7 : 1,
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = '#6366f1';
-                    e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.1)';
+                    if (!isChecking) {
+                      e.target.style.borderColor = '#6366f1';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.1)';
+                    }
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = '#e2e8f0';
@@ -1083,8 +1119,12 @@ const Home: React.FC = () => {
               <Button
                 variant="contained"
                 size="large"
+                onClick={handleWebsiteCheck}
+                disabled={isChecking || !websiteUrl.trim()}
                 sx={{
-                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  background: isChecking || !websiteUrl.trim() 
+                    ? 'linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%)'
+                    : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
                   color: 'white',
                   px: { xs: 4, md: 6 },
                   py: 2,
@@ -1092,19 +1132,38 @@ const Home: React.FC = () => {
                   fontWeight: 600,
                   borderRadius: '12px',
                   textTransform: 'none',
-                  boxShadow: '0 10px 25px rgba(99, 102, 241, 0.3)',
+                  boxShadow: isChecking || !websiteUrl.trim()
+                    ? '0 4px 8px rgba(148, 163, 184, 0.3)'
+                    : '0 10px 25px rgba(99, 102, 241, 0.3)',
                   width: { xs: '100%', md: 'auto' },
                   '&:hover': {
-                    background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%)',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 15px 35px rgba(99, 102, 241, 0.4)',
+                    background: isChecking || !websiteUrl.trim()
+                      ? 'linear-gradient(135deg, #94a3b8 0%, #cbd5e1 100%)'
+                      : 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%)',
+                    transform: isChecking || !websiteUrl.trim() ? 'none' : 'translateY(-2px)',
+                    boxShadow: isChecking || !websiteUrl.trim()
+                      ? '0 4px 8px rgba(148, 163, 184, 0.3)'
+                      : '0 15px 35px rgba(99, 102, 241, 0.4)',
                   },
+                  cursor: isChecking || !websiteUrl.trim() ? 'not-allowed' : 'pointer',
                   transition: 'all 0.3s ease'
                 }}
               >
-                Check Website
+                {isChecking ? (
+                  <>
+                    <CircularProgress size={20} sx={{ mr: 1, color: 'white' }} />
+                    Checking...
+                  </>
+                ) : (
+                  'Check Website'
+                )}
               </Button>
             </Box>
+            
+            {/* Website Checker Result */}
+            {checkResult && (
+              <WebsiteCheckerResult result={checkResult} url={websiteUrl} />
+            )}
           </motion.div>
         </Container>
       </Box>

@@ -25,6 +25,7 @@ import {
   PrivacyTip,
   Policy,
   Support,
+  Analytics,
 } from '@mui/icons-material';
 
 const Footer: React.FC = () => {
@@ -34,6 +35,7 @@ const Footer: React.FC = () => {
     { name: 'Home', href: '/', icon: <Home fontSize="small" /> },
     { name: 'Search Scams', href: '/search', icon: <Search fontSize="small" /> },
     { name: 'Report Scam', href: '/report', icon: <Report fontSize="small" /> },
+    { name: 'Statistics', href: '/statistics', icon: <Analytics fontSize="small" /> },
     { name: 'About Us', href: '/about', icon: <Info fontSize="small" /> },
   ];
 
@@ -285,13 +287,6 @@ const Footer: React.FC = () => {
           </Box>
         </Box>
 
-        {/* Disclaimer */}
-        <Box sx={{ mt: 3, textAlign: 'center' }}>
-          <Typography variant="caption" sx={{ opacity: 0.7 }}>
-            This platform is for educational and reporting purposes only. 
-            Always verify information independently and contact official authorities for legal matters.
-          </Typography>
-        </Box>
       </Container>
     </Box>
   );

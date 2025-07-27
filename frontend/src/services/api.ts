@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Force localhost to avoid IP resolution issues
+const API_BASE_URL = 'http://localhost:5000/api';
 
 // Create axios instance
 const api = axios.create({
@@ -14,10 +15,11 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Only add auth token for endpoints that need it
-    // Exclude GET /scams, /search, and /health from auth requirement
+    // Exclude GET /scams, /search, /website-checker, and /health from auth requirement
     const needsAuth = !(
       config.url?.includes('/health') ||
       config.url?.includes('/search') ||
+      config.url?.includes('/website-checker') ||
       (config.url?.includes('/scams') && config.method === 'get')
     );
     
@@ -141,6 +143,34 @@ export const searchAPI = {
   
   // Get statistics
   getStatistics: () => api.get('/search/stats'),
+};
+
+// Website Checker API
+export const websiteCheckerAPI = {
+  checkWebsite: (url: string) => api.post('/website-checker/check-website', { url }),
+};
+
+// Admin API
+export const adminAPI = {
+  // Get all reports including pending ones
+  getAllReports: (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+  }) => api.get('/admin/reports', { params }),
+  
+  // Get dashboard statistics
+  getDashboardStats: () => api.get('/admin/stats'),
+  
+  // Get all users
+  getAllUsers: (params?: {
+    page?: number;
+    limit?: number;
+  }) => api.get('/admin/users', { params }),
+  
+  // Update user role
+  updateUserRole: (userId: string, role: string) => 
+    api.put(`/admin/users/${userId}/role`, { role }),
 };
 
 // Health check
