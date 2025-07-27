@@ -5,7 +5,7 @@ const getApiBaseUrl = () => {
   // Check if we're in development or production
   if (process.env.NODE_ENV === 'production') {
     // Production: Use environment variable or default to your deployed backend
-    return process.env.REACT_APP_API_URL || 'https://scam-reporter-backend.onrender.com/api';
+    return process.env.REACT_APP_API_URL || 'https://scam-reporter.onrender.com/api';
   } else {
     // Development: Use localhost
     return process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
