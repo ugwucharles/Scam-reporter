@@ -37,7 +37,16 @@ const Login: React.FC = () => {
 
     try {
       await login(formData);
-      navigate('/dashboard');
+      
+      // Get user data after successful login
+      const userData = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      // Redirect based on user role
+      if (userData.role === 'admin' || userData.role === 'moderator') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error: any) {
       setError(error.response?.data?.message || 'Login failed. Please try again.');
     } finally {
@@ -46,7 +55,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 8 }}>
+    <Container maxWidth="sm" sx={{ pt: 12, pb: 8 }}>
       <Card sx={{ p: 4 }}>
         <Box textAlign="center" sx={{ mb: 4 }}>
           <Typography variant="h4" gutterBottom fontWeight={700}>
@@ -101,22 +110,24 @@ const Login: React.FC = () => {
         <Box textAlign="center" sx={{ mt: 3 }}>
           <Typography variant="body2" color="text.secondary">
             Don't have an account?{' '}
-            <Button
-              variant="text"
+            <Typography
+              component="span"
+              variant="body2"
+              sx={{
+                color: 'primary.main',
+                cursor: 'pointer',
+                textDecoration: 'none',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
               onClick={() => navigate('/register')}
-              disabled={isLoading}
             >
               Sign up
-            </Button>
+            </Typography>
           </Typography>
         </Box>
 
-        <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            <strong>Test Mode:</strong> You can use any email and password to log in.
-            This is a demo server for testing purposes.
-          </Typography>
-        </Box>
       </Card>
     </Container>
   );

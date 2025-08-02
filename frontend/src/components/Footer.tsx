@@ -4,292 +4,259 @@ import {
   Container,
   Typography,
   Link,
-  IconButton,
   Divider,
   Stack,
-  Chip,
 } from '@mui/material';
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  LinkedIn,
-  Email,
-  Phone,
-  LocationOn,
-  Security,
-  Report,
-  Search,
-  Home,
-  Info,
-  PrivacyTip,
-  Policy,
-  Support,
-  Analytics,
-} from '@mui/icons-material';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
-  const quickLinks = [
-    { name: 'Home', href: '/', icon: <Home fontSize="small" /> },
-    { name: 'Search Scams', href: '/search', icon: <Search fontSize="small" /> },
-    { name: 'Report Scam', href: '/report', icon: <Report fontSize="small" /> },
-    { name: 'Statistics', href: '/statistics', icon: <Analytics fontSize="small" /> },
-    { name: 'About Us', href: '/about', icon: <Info fontSize="small" /> },
+  const companyLinks = [
+    { name: 'About', href: '/about' },
+    { name: 'Careers', href: '/careers' },
+    { name: 'Blog', href: '/blog' },
+    { name: 'Contact', href: '/contact' },
   ];
 
-  const supportLinks = [
-    { name: 'Privacy Policy', href: '/privacy', icon: <PrivacyTip fontSize="small" /> },
-    { name: 'Terms of Service', href: '/terms', icon: <Policy fontSize="small" /> },
-    { name: 'Support Center', href: '/support', icon: <Support fontSize="small" /> },
-    { name: 'Contact Us', href: '/contact', icon: <Email fontSize="small" /> },
+  const productLinks = [
+    { name: 'Search Scams', href: '/search' },
+    { name: 'Report Scam', href: '/report' },
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'API', href: '/api' },
   ];
 
-  const socialLinks = [
-    { name: 'Facebook', icon: <Facebook />, href: 'https://facebook.com' },
-    { name: 'Twitter', icon: <Twitter />, href: 'https://twitter.com' },
-    { name: 'Instagram', icon: <Instagram />, href: 'https://instagram.com' },
-    { name: 'LinkedIn', icon: <LinkedIn />, href: 'https://linkedin.com' },
+  const resourceLinks = [
+    { name: 'Documentation', href: '/docs' },
+    { name: 'Help Center', href: '/help' },
+    { name: 'Community', href: '/community' },
+    { name: 'Status', href: '/status' },
+  ];
+
+  const legalLinks = [
+    { name: 'Privacy', href: '/privacy' },
+    { name: 'Terms', href: '/terms' },
+    { name: 'Security', href: '/security' },
+    { name: 'Cookies', href: '/cookies' },
   ];
 
   return (
     <Box
       component="footer"
       sx={{
-        bgcolor: 'primary.main',
-        color: 'white',
+        bgcolor: '#fafafa',
+        borderTop: '1px solid #e5e7eb',
         mt: 'auto',
-        pt: 6,
-        pb: 3,
-        position: 'relative',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '4px',
-          background: 'linear-gradient(90deg, #FF6B35 0%, #FF8A5B 50%, #FF6B35 100%)',
-        },
+        py: 8,
       }}
     >
       <Container maxWidth="lg">
+        {/* Main Footer Content */}
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(4, 1fr)',
+            },
             gap: 4,
-            mb: 4,
+            mb: 8,
           }}
         >
-          {/* Company Info */}
-          <Box sx={{ flex: { xs: '1', md: '1' } }}>
-            <Box sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Security sx={{ fontSize: 32, mr: 1 }} />
-                <Typography variant="h5" fontWeight={700}>
-                  Scam Reporter
-                </Typography>
-              </Box>
-              <Typography variant="body2" sx={{ mb: 2, opacity: 0.9 }}>
-                Protecting communities from fraud and scams through collective reporting and awareness.
-                Together, we can make the digital world safer for everyone.
-              </Typography>
-              <Stack direction="row" spacing={1}>
-                <Chip
-                  label="Secure"
-                  size="small"
-                  sx={{
-                    bgcolor: 'success.main',
-                    color: 'white',
-                    fontWeight: 600,
-                  }}
-                />
-                <Chip
-                  label="Trusted"
-                  size="small"
-                  sx={{
-                    bgcolor: 'info.main',
-                    color: 'white',
-                    fontWeight: 600,
-                  }}
-                />
-                <Chip
-                  label="Community"
-                  size="small"
-                  sx={{
-                    bgcolor: 'secondary.main',
-                    color: 'white',
-                    fontWeight: 600,
-                  }}
-                />
-              </Stack>
-            </Box>
-
-            {/* Contact Info */}
-            <Box>
-              <Typography variant="h6" gutterBottom fontWeight={600}>
-                Contact Information
-              </Typography>
-              <Stack spacing={1}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Email sx={{ mr: 1, fontSize: 20 }} />
-                  <Link href="mailto:support@scamreporter.com" color="inherit" underline="hover">
-                    support@scamreporter.com
-                  </Link>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Phone sx={{ mr: 1, fontSize: 20 }} />
-                  <Link href="tel:+1234567890" color="inherit" underline="hover">
-                    +1 (234) 567-890
-                  </Link>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <LocationOn sx={{ mr: 1, fontSize: 20 }} />
-                  <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                    Global Community
-                  </Typography>
-                </Box>
-              </Stack>
-            </Box>
-          </Box>
-
-          {/* Quick Links */}
-          <Box sx={{ flex: { xs: '1', md: '1' } }}>
-            <Typography variant="h6" gutterBottom fontWeight={600}>
-              Quick Links
+          {/* Company */}
+          <Box>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                color: '#111827',
+                fontSize: '0.875rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Company
             </Typography>
-            <Stack spacing={1}>
-              {quickLinks.map((link) => (
+            <Stack spacing={2}>
+              {companyLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
-                  color="inherit"
-                  underline="hover"
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    color: '#6b7280',
                     textDecoration: 'none',
+                    fontSize: '0.875rem',
                     '&:hover': {
-                      color: 'secondary.main',
-                      transform: 'translateX(4px)',
+                      color: '#111827',
                     },
-                    transition: 'all 0.2s ease-in-out',
+                    transition: 'color 0.2s ease',
                   }}
                 >
-                  {link.icon}
-                  <Typography variant="body2" sx={{ ml: 1 }}>
-                    {link.name}
-                  </Typography>
+                  {link.name}
                 </Link>
               ))}
             </Stack>
-
-            <Box sx={{ mt: 4 }}>
-              <Typography variant="h6" gutterBottom fontWeight={600}>
-                Support
-              </Typography>
-              <Stack spacing={1}>
-                {supportLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    color="inherit"
-                    underline="hover"
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      textDecoration: 'none',
-                      '&:hover': {
-                        color: 'secondary.main',
-                        transform: 'translateX(4px)',
-                      },
-                      transition: 'all 0.2s ease-in-out',
-                    }}
-                  >
-                    {link.icon}
-                    <Typography variant="body2" sx={{ ml: 1 }}>
-                      {link.name}
-                    </Typography>
-                  </Link>
-                ))}
-              </Stack>
-            </Box>
           </Box>
 
-          {/* Newsletter & Social */}
-          <Box sx={{ flex: { xs: '1', md: '1' } }}>
-            <Typography variant="h6" gutterBottom fontWeight={600}>
-              Stay Connected
+          {/* Product */}
+          <Box>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                color: '#111827',
+                fontSize: '0.875rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Product
             </Typography>
-            <Typography variant="body2" sx={{ mb: 3, opacity: 0.9 }}>
-              Follow us on social media for the latest scam alerts and security tips.
+            <Stack spacing={2}>
+              {productLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  sx={{
+                    color: '#6b7280',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    '&:hover': {
+                      color: '#111827',
+                    },
+                    transition: 'color 0.2s ease',
+                  }}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </Stack>
+          </Box>
+
+          {/* Resources */}
+          <Box>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                color: '#111827',
+                fontSize: '0.875rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Resources
             </Typography>
+            <Stack spacing={2}>
+              {resourceLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  sx={{
+                    color: '#6b7280',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    '&:hover': {
+                      color: '#111827',
+                    },
+                    transition: 'color 0.2s ease',
+                  }}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </Stack>
+          </Box>
 
-            {/* Social Media Links */}
-            <Box sx={{ mb: 4 }}>
-              <Typography variant="subtitle2" gutterBottom fontWeight={600}>
-                Follow Us
-              </Typography>
-              <Stack direction="row" spacing={1}>
-                {socialLinks.map((social) => (
-                  <IconButton
-                    key={social.name}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      bgcolor: 'rgba(255, 255, 255, 0.1)',
-                      color: 'white',
-                      '&:hover': {
-                        bgcolor: 'secondary.main',
-                        transform: 'translateY(-2px)',
-                      },
-                      transition: 'all 0.2s ease-in-out',
-                    }}
-                  >
-                    {social.icon}
-                  </IconButton>
-                ))}
-              </Stack>
-            </Box>
-
+          {/* Legal */}
+          <Box>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                color: '#111827',
+                fontSize: '0.875rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Legal
+            </Typography>
+            <Stack spacing={2}>
+              {legalLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  sx={{
+                    color: '#6b7280',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    '&:hover': {
+                      color: '#111827',
+                    },
+                    transition: 'color 0.2s ease',
+                  }}
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </Stack>
           </Box>
         </Box>
 
-        <Divider sx={{ my: 4, borderColor: 'rgba(255, 255, 255, 0.2)' }} />
+        <Divider sx={{ borderColor: '#e5e7eb' }} />
 
         {/* Bottom Section */}
         <Box
           sx={{
             display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
+            flexDirection: { xs: 'column', sm: 'row' },
             justifyContent: 'space-between',
-            alignItems: { xs: 'center', md: 'flex-start' },
-            gap: 2,
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            pt: 6,
+            gap: 4,
           }}
         >
-          <Typography variant="body2" sx={{ opacity: 0.8 }}>
+          <Box>
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 700,
+                color: '#111827',
+                mb: 1,
+                fontSize: '1.25rem',
+              }}
+            >
+              Scam Reporter
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: '#6b7280',
+                fontSize: '0.875rem',
+              }}
+            >
+              Protecting communities from fraud.
+            </Typography>
+          </Box>
+
+          <Typography 
+            variant="body2" 
+            sx={{ 
+              color: '#6b7280',
+              fontSize: '0.875rem',
+            }}
+          >
             © {currentYear} Scam Reporter. All rights reserved.
           </Typography>
-          
-          <Box sx={{ display: 'flex', gap: 3 }}>
-            <Link href="/privacy" color="inherit" underline="hover" variant="body2">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" color="inherit" underline="hover" variant="body2">
-              Terms of Service
-            </Link>
-            <Link href="/cookies" color="inherit" underline="hover" variant="body2">
-              Cookie Policy
-            </Link>
-          </Box>
         </Box>
-
       </Container>
     </Box>
   );
 };
 
-export default Footer; 
+export default Footer;

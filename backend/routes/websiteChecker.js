@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const rateLimit = require('express-rate-limit');
+const { logActivity } = require('../middleware/activityTracker');
 
 // Load environment variables
 require('dotenv').config();
@@ -201,6 +202,18 @@ router.post('/check-website', async (req, res) => {
       totalScore,
       isSafe,
       analysis
+    });
+    
+    // Log website check activity
+    await logActivity('website_check', req, {
+      website: sanitizedUrl,
+      domain: domain,
+      result: isSafe ? 'safe' : 'unsafe',
+      score: totalScore,
+      additionalData: {
+        method: analysis.method,
+        accessible: isAccessible
+      }
     });
     
     if (isSafe) {

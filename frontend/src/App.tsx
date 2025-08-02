@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -15,7 +15,6 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import ReportDetails from './pages/ReportDetails';
 import Dashboard from './pages/Dashboard';
-import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 
 // Create theme matching PalmPay's design system
@@ -226,6 +225,38 @@ const queryClient = new QueryClient({
   },
 });
 
+// Component to handle conditional navbar and footer rendering
+const AppContent = () => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  const showNavbarFooter = !isAdminRoute && location.pathname !== '/login';
+
+  return (
+    <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {!isAdminRoute && <Navbar />}
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        style={{ flex: 1 }}
+      >
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/report" element={<ReportScam />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/report/:id" element={<ReportDetails />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        </Routes>
+      </motion.main>
+      {showNavbarFooter && <Footer />}
+    </div>
+  );
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -233,29 +264,7 @@ function App() {
         <CssBaseline />
         <AuthProvider>
           <Router>
-            <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-              <Navbar />
-              <motion.main
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                style={{ flex: 1 }}
-              >
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/search" element={<Search />} />
-                  <Route path="/report" element={<ReportScam />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
-<Route path="/report/:id" element={<ReportDetails />} />
-<Route path="/admin/login" element={<AdminLogin />} />
-<Route path="/admin/dashboard" element={<AdminDashboard />} />
-                </Routes>
-              </motion.main>
-              <Footer />
-            </div>
+            <AppContent />
           </Router>
         </AuthProvider>
       </ThemeProvider>

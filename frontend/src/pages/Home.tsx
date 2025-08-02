@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
@@ -6,13 +6,10 @@ import {
   Box,
   Stack,
   Card,
-  IconButton,
-  useTheme,
-  alpha,
   CircularProgress,
+  Chip,
 } from '@mui/material';
 import {
-  Security,
   ReportProblem,
   Search,
   TrendingUp,
@@ -20,17 +17,46 @@ import {
   Shield,
   VerifiedUser,
   Warning,
+  AutoGraph,
+  Psychology,
+  Verified,
+  Speed,
+  KeyboardArrowRight,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { keyframes } from '@mui/system';
 import { websiteCheckerAPI } from '../services/api';
 import WebsiteCheckerResult from '../components/WebsiteCheckerResult';
 
+const floatAnimation = keyframes`
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+`;
+
 const Home: React.FC = () => {
-  const theme = useTheme();
   const [websiteUrl, setWebsiteUrl] = useState<string>('');
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const [checkResult, setCheckResult] = useState<any>(null);
+  const [currentMetricIndex, setCurrentMetricIndex] = useState(0);
+  const [isAIProcessing, setIsAIProcessing] = useState(false);
+
+  // Real-time metrics rotation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentMetricIndex((prev) => (prev + 1) % 4);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Simulate AI processing
+  useEffect(() => {
+    const processingInterval = setInterval(() => {
+      setIsAIProcessing(prev => !prev);
+    }, 4000);
+    return () => clearInterval(processingInterval);
+  }, []);
 
   const handleWebsiteCheck = async () => {
     if (!websiteUrl.trim()) return;
@@ -73,49 +99,51 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#fafafa' }}>
-      {/* Hero Section */}
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
+      {/* Framer-Style Hero Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
-          py: { xs: 8, md: 12 },
+          minHeight: '100vh',
+          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
           position: 'relative',
           overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          pt: '44px', // Add top padding to account for fixed navbar
         }}
       >
-        {/* Enhanced Background Patterns */}
+        {/* Subtle Background Pattern */}
         <Box
           sx={{
             position: 'absolute',
             top: 0,
             left: 0,
-            right: 0,
-            bottom: 0,
-            opacity: 0.1,
+            width: '100%',
+            height: '100%',
+            opacity: 0.03,
             backgroundImage: `
-              radial-gradient(circle at 20% 80%, white 1px, transparent 1px),
-              radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.5) 2px, transparent 2px),
-              linear-gradient(45deg, transparent 49%, rgba(255, 255, 255, 0.1) 50%, transparent 51%)
+              radial-gradient(circle at 25% 25%, #000 1px, transparent 1px),
+              radial-gradient(circle at 75% 75%, #000 1px, transparent 1px)
             `,
-            backgroundSize: '40px 40px, 60px 60px, 100px 100px',
+            backgroundSize: '50px 50px',
           }}
         />
-        
-        {/* Floating Animated Shapes */}
+
+        {/* Floating Elements */}
         <Box
           sx={{
             position: 'absolute',
-            top: '10%',
-            right: '15%',
-            width: '60px',
-            height: '60px',
+            top: '20%',
+            left: '10%',
+            width: '120px',
+            height: '120px',
             borderRadius: '50%',
-            background: 'rgba(255, 255, 255, 0.1)',
-            animation: 'float 6s ease-in-out infinite',
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1))',
+            animation: 'float 8s ease-in-out infinite',
             '@keyframes float': {
-              '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-20px)' },
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-20px) rotate(180deg)' },
             },
           }}
         />
@@ -123,150 +151,169 @@ const Home: React.FC = () => {
           sx={{
             position: 'absolute',
             bottom: '20%',
-            left: '10%',
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            background: 'rgba(255, 255, 255, 0.15)',
-            animation: 'float 8s ease-in-out infinite reverse',
-            '@keyframes float': {
-              '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-20px)' },
-            },
+            right: '10%',
+            width: '80px',
+            height: '80px',
+            borderRadius: '20px',
+            background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(14, 165, 233, 0.1))',
+            animation: 'float 6s ease-in-out infinite reverse',
           }}
         />
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            right: '5%',
-            width: '30px',
-            height: '30px',
-            borderRadius: '50%',
-            background: 'rgba(255, 255, 255, 0.08)',
-            animation: 'float 7s ease-in-out infinite',
-            '@keyframes float': {
-              '0%, 100%': { transform: 'translateY(0px)' },
-              '50%': { transform: 'translateY(-15px)' },
-            },
-          }}
-        />
-        
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          <Stack 
-            direction={{ xs: 'column', md: 'row' }} 
-            spacing={6} 
-            alignItems="center"
+
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
+          <Box
+            sx={{
+              textAlign: 'center',
+              maxWidth: '800px',
+              mx: 'auto',
+              px: { xs: 2, md: 4 },
+            }}
           >
-            <Box sx={{ flex: 2 }}>
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              {/* Main Headline */}
+              <Typography
+                variant="h1"
+                sx={{
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif',
+                  fontWeight: 600,
+                  fontSize: { xs: '2.5rem', sm: '3rem', md: '3.5rem', lg: '4rem' },
+                  mb: 2.5,
+                  color: '#1d1d1f',
+                  lineHeight: 1.1,
+                  letterSpacing: '-0.02em',
+                  textAlign: 'center',
+                }}
               >
-                {/* Enhanced Badge */}
-                <Box
-                  sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    mb: 3,
-                    px: 2,
-                    py: 1,
-                    borderRadius: '20px',
-                    background: 'rgba(255, 255, 255, 0.15)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    color: 'white',
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      background: '#10b981',
-                      animation: 'pulse 2s infinite',
-                      '@keyframes pulse': {
-                        '0%, 100%': { opacity: 1 },
-                        '50%': { opacity: 0.5 },
-                      },
-                    }}
-                  />
-                  Trusted by 50K+ Users Worldwide
-                </Box>
-
-                <Typography
-                  variant="h1"
-                  sx={{
-                    fontWeight: 900,
-                    fontSize: { xs: '3rem', md: '4.5rem' },
-                    mb: 4,
-                    background: 'linear-gradient(45deg, #ffffff, #e0e7ff)',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                    lineHeight: 1.1,
-                    position: 'relative',
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      bottom: '-10px',
-                      left: 0,
-                      width: '100px',
-                      height: '4px',
-                      background: 'linear-gradient(90deg, #ffffff, transparent)',
-                      borderRadius: '2px',
-                    },
-                  }}
-                >
-                  PalmGuard
-                  <br />
-                  <span style={{ 
-                    fontSize: '0.6em', 
-                    fontWeight: 300,
-                    background: 'linear-gradient(45deg, #e0e7ff, #c7d2fe)',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                  }}>Security</span>
-                </Typography>
-                
-                <Typography
-                  variant="h5"
-                  sx={{
-                    mb: 4,
-                    opacity: 0.95,
-                    fontWeight: 400,
-                    lineHeight: 1.6,
-                    maxWidth: '600px',
-                    fontSize: { xs: '1.25rem', md: '1.5rem' }
-                  }}
-                >
-                  Your trusted financial security platform. Report fraud, search scam databases, 
-                  and protect your digital transactions with enterprise-grade security.
-                </Typography>
-
-                {/* Enhanced Stats Row */}
+                See Scam
                 <Box sx={{ 
-                  display: 'flex', 
-                  gap: 4, 
+                  width: '60px',
+                  height: '2px',
+                  background: '#007AFF',
+                  borderRadius: '1px',
+                  mx: 'auto',
+                  my: 0,
+                }} />
+                Report Scam
+              </Typography>
+              
+              {/* Subtitle */}
+              <Typography
+                variant="h4"
+                sx={{
+                  fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif',
                   mb: 4,
-                  flexWrap: 'wrap'
-                }}>
-                  {[
-                    { number: '10K+', label: 'Reports' },
-                    { number: '95%', label: 'Accuracy' },
-                    { number: '24/7', label: 'Support' },
-                  ].map((stat, index) => (
-                    <Box key={index} sx={{ textAlign: 'center' }}>
+                  color: '#86868b',
+                  fontWeight: 400,
+                  lineHeight: 1.5,
+                  fontSize: { xs: '1.125rem', md: '1.375rem' },
+                  maxWidth: '500px',
+                  mx: 'auto',
+                }}
+              >
+                Identify and report scams. Protect yourself and others.
+              </Typography>
+
+              {/* CTA Buttons */}
+              <Box sx={{ 
+                display: 'flex', 
+                gap: 2.5, 
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                mb: 6,
+              }}>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    component={Link}
+                    to="/search"
+                    variant="contained"
+                    size="small"
+                    sx={{
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif',
+                      px: 3,
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 500,
+                      backgroundColor: '#1d1d1f',
+                      borderRadius: '8px',
+                      textTransform: 'none',
+                      boxShadow: 'none',
+                      '&:hover': {
+                        backgroundColor: '#000000',
+                        boxShadow: 'none',
+                      },
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    Search Scams
+                    <ArrowForward sx={{ ml: 1, fontSize: 16 }} />
+                  </Button>
+                </motion.div>
+
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    component={Link}
+                    to="/report"
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif',
+                      px: 3,
+                      py: 1.5,
+                      fontSize: '1rem',
+                      fontWeight: 500,
+                      borderColor: '#1d1d1f',
+                      color: '#1d1d1f',
+                      borderRadius: '8px',
+                      textTransform: 'none',
+                      borderWidth: '1px',
+                      '&:hover': {
+                        borderColor: '#000000',
+                        backgroundColor: 'rgba(29, 29, 31, 0.05)',
+                        borderWidth: '1px',
+                      },
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    Report Scam
+                    <ReportProblem sx={{ ml: 1, fontSize: 16 }} />
+                  </Button>
+                </motion.div>
+              </Box>
+
+              {/* Stats */}
+              <Box sx={{ 
+                display: 'flex', 
+                gap: 4, 
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+              }}>
+                {[
+                  { number: '50K+', label: 'Reports Filed' },
+                  { number: '10K+', label: 'Scams Identified' },
+                  { number: '99%', label: 'Accuracy Rate' },
+                ].map((stat, index) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Box sx={{ textAlign: 'center' }}>
                       <Typography
-                        variant="h4"
+                        variant="h3"
                         sx={{
                           fontWeight: 800,
-                          color: 'white',
+                          color: '#1e293b',
                           fontSize: { xs: '1.5rem', md: '2rem' },
                           mb: 0.5,
                         }}
@@ -274,760 +321,623 @@ const Home: React.FC = () => {
                         {stat.number}
                       </Typography>
                       <Typography
-                        variant="body2"
+                        variant="body1"
                         sx={{
-                          color: 'rgba(255, 255, 255, 0.8)',
-                          fontSize: { xs: '0.8rem', md: '0.9rem' },
+                          color: '#64748b',
                           fontWeight: 500,
+                          fontSize: '0.75rem',
                         }}
                       >
                         {stat.label}
                       </Typography>
                     </Box>
-                  ))}
-                </Box>
-
-                <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap' }}>
-                  <Button
-                    component={Link}
-                    to="/report"
-                    variant="contained"
-                    size="large"
-                    endIcon={<ArrowForward />}
-                    sx={{
-                      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                      color: 'white',
-                      py: 2,
-                      px: 5,
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      borderRadius: '12px',
-                      boxShadow: '0 10px 25px rgba(99, 102, 241, 0.3)',
-                      '&:hover': {
-                        background: 'linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%)',
-                        transform: 'translateY(-2px)',
-                        boxShadow: '0 15px 35px rgba(99, 102, 241, 0.4)',
-                      },
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
-                    Report Fraud
-                  </Button>
-                  <Button
-                    component={Link}
-                    to="/search"
-                    variant="outlined"
-                    size="large"
-                    sx={{
-                      borderColor: 'rgba(255, 255, 255, 0.3)',
-                      color: 'white',
-                      py: 2,
-                      px: 5,
-                      fontSize: '1.1rem',
-                      fontWeight: 600,
-                      borderRadius: '12px',
-                      borderWidth: '2px',
-                      '&:hover': {
-                        borderColor: 'white',
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        transform: 'translateY(-2px)',
-                      },
-                      transition: 'all 0.3s ease'
-                    }}
-                  >
-                    Search Database
-                  </Button>
-                </Box>
-              </motion.div>
-            </Box>
-            <Box sx={{ flex: 1 }}>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    position: 'relative'
-                  }}
-                >
-                  {/* Enhanced 3D Shield with Multiple Layers */}
-                  <Box
-                    sx={{
-                      width: 280,
-                      height: 280,
-                      borderRadius: '50%',
-                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
-                      backdropFilter: 'blur(20px)',
-                      border: '1px solid rgba(255, 255, 255, 0.2)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      boxShadow: '0 25px 50px rgba(0, 0, 0, 0.1)',
-                      position: 'relative',
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: '-10px',
-                        left: '-10px',
-                        right: '-10px',
-                        bottom: '-10px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%)',
-                        zIndex: -1,
-                        animation: 'pulse 3s ease-in-out infinite',
-                      },
-                      '&::after': {
-                        content: '""',
-                        position: 'absolute',
-                        top: '-20px',
-                        left: '-20px',
-                        right: '-20px',
-                        bottom: '-20px',
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%)',
-                        zIndex: -2,
-                        animation: 'pulse 4s ease-in-out infinite reverse',
-                      },
-                    }}
-                  >
-                    <Security sx={{ 
-                      fontSize: 120, 
-                      color: 'white',
-                      filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))',
-                    }} />
-                  </Box>
-                  
-                  {/* Orbiting Elements */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      width: '320px',
-                      height: '320px',
-                      transform: 'translate(-50%, -50%)',
-                      animation: 'rotate 20s linear infinite',
-                      '@keyframes rotate': {
-                        '0%': { transform: 'translate(-50%, -50%) rotate(0deg)' },
-                        '100%': { transform: 'translate(-50%, -50%) rotate(360deg)' },
-                      },
-                    }}
-                  >
-                    {[0, 120, 240].map((angle, index) => (
-                      <Box
-                        key={index}
-                        sx={{
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          width: '8px',
-                          height: '8px',
-                          borderRadius: '50%',
-                          background: 'rgba(255, 255, 255, 0.6)',
-                          transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(-160px)`,
-                          animation: `pulse ${2 + index * 0.5}s ease-in-out infinite`,
-                        }}
-                      />
-                    ))}
-                  </Box>
-                </Box>
-              </motion.div>
-            </Box>
-          </Stack>
+                  </motion.div>
+                ))}
+              </Box>
+            </motion.div>
+          </Box>
         </Container>
       </Box>
 
-      {/* B Section (Modern Features) */}
+      {/* B Section (Tools Section) */}
       <Box sx={{ 
-        position: 'relative', 
-        zIndex: 3, 
-        mt: { xs: -6, md: -8 }, 
-        mb: { xs: -6, md: -8 },
-        py: { xs: 8, md: 6 },
-        minHeight: { xs: '400px', md: 'auto' },
+        position: 'relative',
+        py: { xs: 12, md: 16 },
+        backgroundColor: '#000000',
+        overflow: 'hidden',
       }}>
-        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 3, px: { xs: 2, md: 4 } }}>
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
-            {/* Desktop Card */}
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-              <Card
-                sx={{
-                  p: { xs: 6, md: 8 },
-                  minHeight: { xs: '400px', md: '450px' },
-                  borderRadius: '24px',
-                  boxShadow: '0 25px 50px rgba(0, 0, 0, 0.1)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(20px)',
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%)',
-                }}
-              >
-                <Typography
-                  variant="h3"
-                  align="center"
-                  sx={{
-                    mb: 2,
-                    fontWeight: 800,
-                    background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
-                    backgroundClip: 'text',
-                    WebkitBackgroundClip: 'text',
-                    color: 'transparent',
-                    fontSize: { xs: '1.8rem', md: '2.2rem' }
-                  }}
-                >
-                  Comprehensive Fraud Protection
-                </Typography>
-                <Typography
-                  variant="h6"
-                  align="center"
-                  sx={{
-                    mb: 4,
-                    color: '#64748b',
-                    fontSize: '1rem',
-                    lineHeight: 1.5,
-                    maxWidth: '600px',
-                    mx: 'auto',
-                    fontWeight: 400
-                  }}
-                >
-                  Advanced tools and community-driven intelligence to keep your finances secure
-                </Typography>
+        <Container maxWidth="xl" sx={{ position: 'relative', zIndex: 2, px: { xs: 2, md: 3 } }}>
+          {/* Top Left Text */}
+          <Box sx={{ textAlign: 'left', mb: 8, maxWidth: '500px' }}>
+            <Typography
+              variant="h2"
+              sx={{
+                fontWeight: 700,
+                fontSize: { xs: '2.5rem', md: '3.5rem' },
+                lineHeight: 1.1,
+                mb: 2,
+                color: '#ffffff'
+              }}
+            >
+              Build Trust Online
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 400,
+                fontSize: { xs: '1.1rem', md: '1.3rem' },
+                color: '#ffffff',
+                lineHeight: 1.5,
+              }}
+            >
+              Intelligent, fast, and reliable. The best way to identify and report online scams.
+            </Typography>
+          </Box>
 
-                <Stack 
-                  direction={{ xs: 'column', md: 'row' }} 
-                  spacing={3}
-                  justifyContent="center"
-                  alignItems="stretch"
-                  sx={{
-                    flexWrap: 'wrap',
-                    width: '100%',
-                    mt: 6,
-                  }}
-                >
-                  {features.map((feature, index) => (
-                    <Box key={index} sx={{
-                      width: { xs: '100%', md: '32%' },
-                      minWidth: { xs: 'auto', md: 'auto' },
-                      flexShrink: 1,
-                      display: 'flex',
-                    }}>
-                      <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            spacing={{ xs: 4, md: 2 }}
+            justifyContent="center"
+            alignItems="stretch"
+            sx={{ maxWidth: '95%', mx: 'auto', width: '100%' }}
+          >
+            {[
+              // Left Card - Report Function
+              {
+                type: 'report',
+                title: "Report a Scam",
+                description: "Help protect others by reporting suspicious activities and fraudulent schemes you've encountered.",
+                icon: <ReportProblem sx={{ fontSize: 32 }} />,
+                gradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                feature: "Community Protection",
+                link: '/report'
+              },
+              // Middle Card - Website Verification
+              {
+                type: 'verify',
+                title: "Verify Website Safety",
+                description: "Check if a website is legitimate and safe before sharing your personal information with our advanced verification system.",
+                icon: <Verified sx={{ fontSize: 32 }} />,
+                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                feature: "Real-time Check",
+                link: '#website-checker'
+              },
+              // Right Card - Search Function
+              {
+                type: 'search',
+                title: "Search Scam Database",
+                description: "Search our comprehensive database of reported scams and check if something is a known threat.",
+                icon: <Search sx={{ fontSize: 32 }} />,
+                gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                feature: "Instant Lookup",
+                link: '/search'
+              },
+            ].map((tool, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                whileHover={{ y: -8 }}
+                style={{ flex: 1 }}
+              >
+                {tool.link.startsWith('#') ? (
+                  <Box
+                    component="a"
+                    href={tool.link}
+                    sx={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <Box
+                      sx={{
+                        position: 'relative',
+                        p: 6,
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        backdropFilter: 'blur(20px)',
+                        borderRadius: '24px',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        cursor: 'pointer',
+                        overflow: 'hidden',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        
+                        '&:hover': {
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+                          transform: 'translateY(-8px)',
+                          
+                          '& .gradient-icon': {
+                            background: tool.gradient,
+                            transform: 'scale(1.1)',
+                          },
+                          
+                          '& .feature-badge': {
+                            background: tool.gradient,
+                            transform: 'translateX(8px)',
+                          }
+                        },
+                        
+                        // Subtle gradient overlay
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          background: `linear-gradient(135deg, ${tool.gradient.match(/#[a-fA-F0-9]{6}/g)?.[0] || '#667eea'}10 0%, transparent 50%)`,
+                          borderRadius: '24px',
+                          opacity: 0,
+                          transition: 'opacity 0.4s ease',
+                          pointerEvents: 'none',
+                        },
+                        
+                        '&:hover::before': {
+                          opacity: 1,
+                        }
+                      }}
+                    >
+                      {/* Feature Badge */}
+                      <Box
+                        className="feature-badge"
+                        sx={{
+                          position: 'absolute',
+                          top: 20,
+                          right: 20,
+                          px: 2,
+                          py: 0.5,
+                          borderRadius: '12px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          transition: 'all 0.4s ease',
+                        }}
                       >
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                          }}
+                        >
+                          {tool.feature}
+                        </Typography>
+                      </Box>
+                      
+                      {/* Icon */}
+                      <Box
+                        className="gradient-icon"
+                        sx={{
+                          width: 64,
+                          height: 64,
+                          borderRadius: '16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          mb: 4,
+                          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                          border: '1px solid rgba(255, 255, 255, 0.15)',
+                        }}
+                      >
+                        <Box sx={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {tool.icon}
+                        </Box>
+                      </Box>
+                      
+                      {/* Content */}
+                      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                        <Typography
+                          variant="h5"
+                          sx={{
+                            fontWeight: 700,
+                            mb: 3,
+                            color: '#ffffff',
+                            fontSize: '1.5rem',
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {tool.title}
+                        </Typography>
+                        
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            lineHeight: 1.6,
+                            fontSize: '1rem',
+                            flex: 1,
+                          }}
+                        >
+                          {tool.description}
+                        </Typography>
+                        
+                        {/* Learn More Link */}
                         <Box
-                          component={Link}
-                          to={feature.link}
                           sx={{
                             display: 'flex',
-                            flexDirection: 'column',
-                            justifyContent: 'center',
                             alignItems: 'center',
-                            textAlign: 'center',
-                            p: 3,
-                            borderRadius: '20px',
-                            textDecoration: 'none',
-                            background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                            border: '1px solid rgba(148, 163, 184, 0.1)',
-                            transition: 'all 0.3s ease',
+                            mt: 4,
                             cursor: 'pointer',
-                            height: '180px',
+                            transition: 'all 0.3s ease',
                             '&:hover': {
-                              transform: 'translateY(-8px)',
-                              background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-                              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                              '& .arrow-icon': {
+                                transform: 'translateX(4px)',
+                              }
                             }
                           }}
                         >
-                          <Box sx={{ mb: 2 }}>
-                            {React.cloneElement(feature.icon, { sx: { fontSize: 48 } })}
-                          </Box>
-                          <Typography 
-                            variant="h5" 
-                            sx={{ 
-                              mb: 2, 
-                              fontWeight: 700,
-                              color: '#1e293b',
-                              fontSize: '1.25rem'
-                            }}
-                          >
-                            {feature.title}
-                          </Typography>
-                          <Typography 
-                            variant="body1" 
+                          <Typography
+                            variant="body2"
                             sx={{
-                              color: '#64748b',
-                              fontSize: '0.95rem',
-                              lineHeight: 1.5,
-                              textAlign: 'center'
+                              color: 'rgba(255, 255, 255, 0.9)',
+                              fontWeight: 600,
+                              fontSize: '0.9rem',
+                              mr: 1,
                             }}
                           >
-                            {feature.description}
+                            Learn more
                           </Typography>
+                          <KeyboardArrowRight
+                            className="arrow-icon"
+                            sx={{
+                              color: 'rgba(255, 255, 255, 0.9)',
+                              fontSize: 18,
+                              transition: 'transform 0.3s ease',
+                            }}
+                          />
                         </Box>
-                      </motion.div>
+                      </Box>
                     </Box>
-                  ))}
-                </Stack>
-              </Card>
-            </Box>
-
-            {/* Mobile Content (no card) */}
-            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-              <Typography
-                variant="h3"
-                align="center"
-                sx={{
-                  mb: 3,
-                  fontWeight: 800,
-                  background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  color: 'transparent',
-                  fontSize: '2rem'
-                }}
-              >
-                Comprehensive Fraud Protection
-              </Typography>
-              <Typography
-                variant="h6"
-                align="center"
-                sx={{
-                  mb: 6,
-                  color: '#64748b',
-                  fontSize: '1.1rem',
-                  lineHeight: 1.6,
-                  maxWidth: '600px',
-                  mx: 'auto',
-                  fontWeight: 400
-                }}
-              >
-                Advanced tools and community-driven intelligence to keep your finances secure
-              </Typography>
-
-              <Stack 
-                direction={{ xs: 'column', md: 'row' }} 
-                spacing={3}
-                justifyContent="center"
-                alignItems="stretch"
-                sx={{
-                  flexWrap: 'wrap',
-                  width: '100%',
-                  mt: 6,
-                }}
-              >
-                {features.map((feature, index) => (
-                  <Box key={index} sx={{
-                    width: '100%',
-                    minWidth: 'auto',
-                    flexShrink: 1,
-                    display: 'flex',
-                  }}>
-                    <motion.div
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
-                    >
-                      <Box
-                        component={Link}
-                        to={feature.link}
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          textAlign: 'center',
-                          p: 3,
-                          borderRadius: '20px',
-                          textDecoration: 'none',
-                          background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                          border: '1px solid rgba(148, 163, 184, 0.1)',
-                          transition: 'all 0.3s ease',
-                          cursor: 'pointer',
-                          height: '180px',
-                          '&:hover': {
-                            transform: 'translateY(-8px)',
-                            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-                            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                  </Box>
+                ) : (
+                  <Box
+                    component={Link}
+                    to={tool.link}
+                    sx={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <Box
+                      sx={{
+                        position: 'relative',
+                        p: 6,
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        backdropFilter: 'blur(20px)',
+                        borderRadius: '24px',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        cursor: 'pointer',
+                        overflow: 'hidden',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        
+                        '&:hover': {
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+                          transform: 'translateY(-8px)',
+                          
+                          '& .gradient-icon': {
+                            background: tool.gradient,
+                            transform: 'scale(1.1)',
+                          },
+                          
+                          '& .feature-badge': {
+                            background: tool.gradient,
+                            transform: 'translateX(8px)',
                           }
+                        },
+                        
+                        // Subtle gradient overlay
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          background: `linear-gradient(135deg, ${tool.gradient.match(/#[a-fA-F0-9]{6}/g)?.[0] || '#667eea'}10 0%, transparent 50%)`,
+                          borderRadius: '24px',
+                          opacity: 0,
+                          transition: 'opacity 0.4s ease',
+                          pointerEvents: 'none',
+                        },
+                        
+                        '&:hover::before': {
+                          opacity: 1,
+                        }
+                      }}
+                    >
+                      {/* Feature Badge */}
+                      <Box
+                        className="feature-badge"
+                        sx={{
+                          position: 'absolute',
+                          top: 20,
+                          right: 20,
+                          px: 2,
+                          py: 0.5,
+                          borderRadius: '12px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          transition: 'all 0.4s ease',
                         }}
                       >
-                        <Box sx={{ mb: 2 }}>
-                          {React.cloneElement(feature.icon, { sx: { fontSize: 48 } })}
-                        </Box>
-                        <Typography 
-                          variant="h5" 
-                          sx={{ 
-                            mb: 2, 
-                            fontWeight: 700,
-                            color: '#1e293b',
-                            fontSize: '1.25rem'
-                          }}
-                        >
-                          {feature.title}
-                        </Typography>
-                        <Typography 
-                          variant="body1" 
+                        <Typography
+                          variant="caption"
                           sx={{
-                            color: '#64748b',
-                            fontSize: '0.95rem',
-                            lineHeight: 1.5,
-                            textAlign: 'center'
+                            color: 'rgba(255, 255, 255, 0.8)',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
                           }}
                         >
-                          {feature.description}
+                          {tool.feature}
                         </Typography>
                       </Box>
-                    </motion.div>
-                  </Box>
-                ))}
-              </Stack>
-            </Box>
-          </motion.div>
-        </Container>
-      </Box>
-
-      {/* C Section (3D Premium Stats) */}
-      <Box sx={{ 
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        py: { xs: 12, md: 16 },
-        position: 'relative',
-        zIndex: 1,
-        mt: { xs: 0, md: 0 },
-        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-        overflow: 'hidden',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%)',
-          pointerEvents: 'none',
-        },
-        // Floating particles animation
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: `
-            radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-            radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
-          `,
-          backgroundSize: '100px 100px, 150px 150px, 120px 120px',
-          animation: 'float 20s linear infinite',
-          '@keyframes float': {
-            '0%': { transform: 'translateY(0px)' },
-            '50%': { transform: 'translateY(-10px)' },
-            '100%': { transform: 'translateY(0px)' },
-          },
-          pointerEvents: 'none',
-        }
-      }}>
-        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Typography
-              variant="h3"
-              align="center"
-              sx={{
-                mb: 3,
-                fontWeight: 900,
-                background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, #cbd5e1 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                color: 'transparent',
-                fontSize: { xs: '2.2rem', md: '3rem' },
-                textShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
-                position: 'relative',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: '-10px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '80px',
-                  height: '4px',
-                  background: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
-                  borderRadius: '2px',
-                  boxShadow: '0 2px 8px rgba(99, 102, 241, 0.5)',
-                }
-              }}
-            >
-              Our Impact in Numbers
-            </Typography>
-            
-            <Typography
-              variant="h6"
-              align="center"
-              sx={{
-                mb: 8,
-                color: 'rgba(255, 255, 255, 0.8)',
-                fontSize: { xs: '1rem', md: '1.2rem' },
-                fontWeight: 400,
-                maxWidth: '600px',
-                mx: 'auto',
-                lineHeight: 1.6
-              }}
-            >
-              Discover the real-world impact we're making in the fight against fraud
-            </Typography>
-          </motion.div>
-          
-          <Stack 
-            direction={{ xs: 'column', md: 'row' }}
-            spacing={{ xs: 8, md: 6 }}
-            justifyContent="center"
-            alignItems="center"
-            sx={{ mt: 6 }}
-          >
-            {[
-              { 
-                icon: <Shield sx={{ fontSize: 60 }} />, 
-                number: '50K+', 
-                label: 'Users Protected', 
-                description: 'Trusted by security professionals worldwide',
-                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                hoverGradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-                shadowColor: 'rgba(102, 126, 234, 0.4)',
-                hoverShadowColor: 'rgba(249, 115, 22, 0.5)',
-                size: 'large'
-              },
-              { 
-                icon: <VerifiedUser sx={{ fontSize: 50 }} />, 
-                number: '99.5%', 
-                label: 'Detection Rate', 
-                description: 'Advanced AI-powered fraud detection',
-                gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                hoverGradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                shadowColor: 'rgba(102, 126, 234, 0.4)',
-                hoverShadowColor: 'rgba(16, 185, 129, 0.5)',
-                size: 'medium'
-              },
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50, rotateY: -15 }}
-                animate={{ opacity: 1, y: 0, rotateY: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 + index * 0.2 }}
-                style={{ 
-                  perspective: '1000px',
-                  transformStyle: 'preserve-3d',
-                  width: '100%',
-                  maxWidth: '350px'
-                }}
-              >
-                <Box
-                  sx={{
-                    position: 'relative',
-                    background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
-                    backdropFilter: 'blur(20px)',
-                    borderRadius: '24px',
-                    p: { xs: 4, md: 5 },
-                    textAlign: 'center',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    boxShadow: `
-                      0 25px 50px ${stat.shadowColor},
-                      0 0 0 1px rgba(255, 255, 255, 0.05),
-                      inset 0 1px 0 rgba(255, 255, 255, 0.1)
-                    `,
-                    transformStyle: 'preserve-3d',
-                    transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                    cursor: 'pointer',
-                    overflow: 'hidden',
-                    
-                    // 3D hover effects
-                    '&:hover': {
-                      transform: 'translateY(-15px) rotateX(5deg) rotateY(5deg) scale(1.02)',
-                      boxShadow: `
-                        0 35px 70px ${stat.shadowColor},
-                        0 0 0 1px rgba(255, 255, 255, 0.1),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.2)
-                      `,
-                      '&::before': {
-                        opacity: 1,
-                        transform: 'scale(1.1)',
-                        background: `radial-gradient(circle at 50% 50%, ${stat.gradient.replace(/linear-gradient\(135deg, /, '').replace(/\)$/, '').split(' 0%, ')[0]} 0%, transparent 70%)`
-                      },
-                      '& .stat-icon-container': {
-                        transform: 'translateZ(20px) scale(1.1)',
-                        background: stat.gradient,
-                        boxShadow: `0 10px 30px ${stat.shadowColor}`,
-                        '&::before': {
-                          background: stat.gradient
-                        }
-                      },
-                      '& .stat-number': {
-                        transform: 'translateZ(15px)',
-                        background: stat.gradient,
-                        backgroundClip: 'text',
-                        WebkitBackgroundClip: 'text',
-                        color: 'transparent'
-                      },
-                      '& .stat-label': {
-                        transform: 'translateZ(10px)',
-                        color: 'white'
-                      },
-                      '& .stat-description': {
-                        transform: 'translateZ(5px)',
-                        color: 'rgba(255, 255, 255, 0.9)'
-                      }
-                    },
-                    
-                    // Animated background gradient
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      background: `radial-gradient(circle at 50% 50%, ${stat.gradient.replace(/linear-gradient\(135deg, /, '').replace(/\)$/, '').split(' 0%, ')[0]} 0%, transparent 70%)`,
-                      opacity: 0,
-                      borderRadius: '24px',
-                      transition: 'all 0.6s ease',
-                      transform: 'scale(0.8)',
-                      zIndex: -1
-                    },
-                    
-                    // Floating particles inside card
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      backgroundImage: `
-                        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
-                      `,
-                      backgroundSize: '30px 30px, 50px 50px',
-                      animation: 'sparkle 8s linear infinite',
-                      '@keyframes sparkle': {
-                        '0%, 100%': { opacity: 0.3 },
-                        '50%': { opacity: 0.8 },
-                      },
-                      pointerEvents: 'none',
-                      borderRadius: '24px'
-                    }
-                  }}
-                >
-                  {/* 3D Icon Container */}
-                  <Box
-                    className="stat-icon-container"
-                    sx={{
-                      width: 100,
-                      height: 100,
-                      borderRadius: '20px',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mx: 'auto',
-                      mb: 3,
-                      border: '2px solid rgba(255, 255, 255, 0.2)',
-                      transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                      transformStyle: 'preserve-3d',
-                      position: 'relative',
                       
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: '-5px',
-                        left: '-5px',
-                        right: '-5px',
-                        bottom: '-5px',
-                        background: stat.gradient,
-                        borderRadius: '25px',
-                        opacity: 0.3,
-                        filter: 'blur(10px)',
-                        zIndex: -1,
-                        transition: 'all 0.6s ease'
-                      }
-                    }}
-                  >
-                    <Box sx={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {stat.icon}
+                      {/* Icon */}
+                      <Box
+                        className="gradient-icon"
+                        sx={{
+                          width: 64,
+                          height: 64,
+                          borderRadius: '16px',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          mb: 4,
+                          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                          border: '1px solid rgba(255, 255, 255, 0.15)',
+                        }}
+                      >
+                        <Box sx={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {tool.icon}
+                        </Box>
+                      </Box>
+                      
+                      {/* Content */}
+                      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                        <Typography
+                          variant="h5"
+                          sx={{
+                            fontWeight: 700,
+                            mb: 3,
+                            color: '#ffffff',
+                            fontSize: '1.5rem',
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {tool.title}
+                        </Typography>
+                        
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            lineHeight: 1.6,
+                            fontSize: '1rem',
+                            flex: 1,
+                          }}
+                        >
+                          {tool.description}
+                        </Typography>
+                        
+                        {/* Learn More Link */}
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            mt: 4,
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              '& .arrow-icon': {
+                                transform: 'translateX(4px)',
+                              }
+                            }
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: 'rgba(255, 255, 255, 0.9)',
+                              fontWeight: 600,
+                              fontSize: '0.9rem',
+                              mr: 1,
+                            }}
+                          >
+                            Learn more
+                          </Typography>
+                          <KeyboardArrowRight
+                            className="arrow-icon"
+                            sx={{
+                              color: 'rgba(255, 255, 255, 0.9)',
+                              fontSize: 18,
+                              transition: 'transform 0.3s ease',
+                            }}
+                          />
+                        </Box>
+                      </Box>
                     </Box>
                   </Box>
-                  
-                  {/* 3D Number */}
-                  <Typography 
-                    className="stat-number"
-                    variant="h2" 
-                    sx={{ 
-                      mb: 2,
-                      color: 'white',
-                      fontSize: { xs: '3rem', md: '3.5rem' },
-                      fontWeight: 900,
-                      transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                      transformStyle: 'preserve-3d',
-                      lineHeight: 1
-                    }}
-                  >
-                    {stat.number}
-                  </Typography>
-                  
-                  {/* 3D Label */}
-                  <Typography 
-                    className="stat-label"
-                    variant="h5" 
-                    sx={{ 
-                      mb: 2,
-                      color: 'rgba(255, 255, 255, 0.9)',
-                      fontSize: { xs: '1.2rem', md: '1.4rem' },
-                      fontWeight: 700,
-                      transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                      transformStyle: 'preserve-3d',
-                      textShadow: '0 2px 4px rgba(0, 0, 0, 0.3)'
-                    }}
-                  >
-                    {stat.label}
-                  </Typography>
-                  
-                  {/* 3D Description */}
-                  <Typography 
-                    className="stat-description"
-                    variant="body1" 
-                    sx={{ 
-                      color: 'rgba(255, 255, 255, 0.7)',
-                      fontSize: { xs: '0.9rem', md: '1rem' },
-                      fontWeight: 400,
-                      lineHeight: 1.5,
-                      transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                      transformStyle: 'preserve-3d'
-                    }}
-                  >
-                    {stat.description}
-                  </Typography>
-                </Box>
+                )}
               </motion.div>
             ))}
           </Stack>
         </Container>
       </Box>
 
+      {/* C Section (Statistics Section) */}
+      <Box
+        sx={{
+          py: { xs: 4, md: 6 }, // Add vertical padding for spacing above boxes
+          background: '#f8fafc',
+        }}
+      >
+        <Container maxWidth="xl" sx={{ px: { xs: 2, md: 3 } }}> {/* Add container with horizontal padding */}
+          <Stack 
+            direction={{ xs: 'column', md: 'row' }}
+            spacing={{ xs: 2, md: 0 }} // Add small spacing between boxes on mobile
+            sx={{ width: '100%' }}
+          >
+            {/* Black Box - Users */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              style={{ flex: 1 }}
+            >
+              <Box
+                sx={{
+                  background: 'linear-gradient(135deg, #0d0d0d, #1a1a1a)',
+                  color: '#fff',
+                  borderRadius: '16px',
+                  p: { xs: 8, md: 12 },
+                  textAlign: 'center',
+                  minHeight: { xs: '400px', md: '500px' },
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)',
+                  },
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'linear-gradient(135deg, #1a1a1a 0%, #000 100%)',
+                    zIndex: -1,
+                  }
+                }}
+              >
+                <Typography 
+                  variant="h1" 
+                  sx={{ 
+                    fontWeight: 900, 
+                    fontSize: { xs: '3rem', md: '4rem' },
+                    mb: 2,
+                    background: 'linear-gradient(135deg, #fff 0%, #e5e5e5 100%)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    color: 'transparent',
+                  }}
+                >
+                  50K+
+                </Typography>
+                <Typography 
+                  variant="h4" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    fontSize: { xs: '1.5rem', md: '2rem' },
+                    mb: 1,
+                    color: '#fff'
+                  }}
+                >
+                  Active Users
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: { xs: '1rem', md: '1.2rem' },
+                    maxWidth: '300px',
+                    mx: 'auto'
+                  }}
+                >
+                  Trust our platform to protect their digital lives
+                </Typography>
+              </Box>
+            </motion.div>
+
+            {/* White Box - Accuracy */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              style={{ flex: 1 }}
+            >
+              <Box
+                sx={{
+                  background: 'linear-gradient(135deg, #f0f0f0, #e0e0e0)',
+                  color: '#000',
+                  borderRadius: '16px',
+                  p: { xs: 8, md: 12 },
+                  textAlign: 'center',
+                  minHeight: { xs: '400px', md: '500px' },
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                  },
+                }}
+              >
+                <Typography 
+                  variant="h1" 
+                  sx={{ 
+                    fontWeight: 900, 
+                    fontSize: { xs: '3rem', md: '4rem' },
+                    mb: 2,
+                    background: 'linear-gradient(135deg, #1e293b 0%, #64748b 100%)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    color: 'transparent',
+                  }}
+                >
+                  99.5%
+                </Typography>
+                <Typography 
+                  variant="h4" 
+                  sx={{ 
+                    fontWeight: 600, 
+                    fontSize: { xs: '1.5rem', md: '2rem' },
+                    mb: 1,
+                    color: '#1e293b'
+                  }}
+                >
+                  Report Accuracy
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    color: '#64748b',
+                    fontSize: { xs: '1rem', md: '1.2rem' },
+                    maxWidth: '300px',
+                    mx: 'auto'
+                  }}
+                >
+                  Of verified reports are confirmed as legitimate threats
+                </Typography>
+              </Box>
+            </motion.div>
+          </Stack>
+        </Container> {/* Close container */}
+      </Box>
+
       {/* D Section (Modern Website Checker) */}
       <Box sx={{ 
         py: { xs: 8, md: 12 },
-        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
         borderTop: '1px solid rgba(148, 163, 184, 0.1)',
         borderBottom: '1px solid rgba(148, 163, 184, 0.1)',
       }}>
@@ -1454,6 +1364,7 @@ const Home: React.FC = () => {
           </motion.div>
         </Container>
       </Box>
+
 
     </Box>
   );

@@ -18,6 +18,7 @@
     "express-rate-limit": "^6.10.0",
     "express-validator": "^7.0.1",
     "fuse.js": "^7.1.0",
+    "geoip-lite": "^1.4.10",
     "helmet": "^7.0.0",
     "ip": "^2.0.1",
     "jsonwebtoken": "^9.0.2",

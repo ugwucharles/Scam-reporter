@@ -99,9 +99,9 @@ const scamReportSchema = new mongoose.Schema({
   
   // Evidence
   evidence: [{
-    type: {
+type: {
       type: String,
-      enum: ['screenshot', 'document', 'email', 'text_message', 'other']
+      enum: ['screenshot', 'document', 'email', 'text_message', 'video', 'other']
     },
     filename: String,
     url: String,
@@ -113,6 +113,22 @@ const scamReportSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: false // Allow anonymous reports
+  },
+  reporterInfo: {
+    name: {
+      type: String,
+      trim: true,
+      maxlength: 100
+    },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true
+    },
+    phone: {
+      type: String,
+      trim: true
+    }
   },
   reporterContact: {
     allowContact: {
@@ -127,10 +143,18 @@ const scamReportSchema = new mongoose.Schema({
   },
   
   // Status and Moderation
-  status: {
+status: {
     type: String,
     enum: ['pending', 'approved', 'rejected', 'under_review'],
     default: 'pending'
+  },
+  validation: {
+    step: {
+      type: String,
+      enum: ['initial_screening', 'automated_verification', 'manual_review', 'feedback_request', 'external_check', 'decision_making', 'completed'],
+      default: 'initial_screening',
+    },
+    comments: String,
   },
   moderatedBy: {
     type: mongoose.Schema.Types.ObjectId,

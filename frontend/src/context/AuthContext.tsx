@@ -155,6 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     dispatch({ type: 'LOGOUT' });
+    window.location.href = '/login';
   };
 
   const updateUser = (user: User): void => {

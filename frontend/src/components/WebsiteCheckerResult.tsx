@@ -110,9 +110,9 @@ const WebsiteCheckerResult: React.FC<WebsiteCheckerResultProps> = ({ result, url
         mt: 4,
         p: 4,
         borderRadius: '16px',
-        border: result.safe ? '1px solid #10b981' : '1px solid #f87171',
+        border: result.safe ? '1px solid black' : '1px solid #f87171',
         background: result.safe 
-          ? 'linear-gradient(135deg, #f0fdf4 0%, #f7fef7 100%)'
+          ? 'white'
           : 'linear-gradient(135deg, #fef2f2 0%, #fef7f7 100%)',
         boxShadow: '0 10px 25px rgba(0, 0, 0, 0.08)',
       }}

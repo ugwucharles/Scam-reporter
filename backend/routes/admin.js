@@ -2,6 +2,7 @@ const express = require('express');
 const { query, validationResult } = require('express-validator');
 const ScamReport = require('../models/ScamReport');
 const User = require('../models/User');
+const Activity = require('../models/Activity');
 const { adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -273,6 +274,129 @@ router.delete('/reports/:reportId', adminAuth, async (req, res) => {
   } catch (error) {
     console.error('Delete report error:', error);
     res.status(500).json({ message: 'Server error deleting report' });
+  }
+});
+
+// @route   GET /api/admin/activities
+// @desc    Get all user activities
+// @access  Private (Admin)
+router.get('/activities', adminAuth, [
+  query('page').optional().isInt({ min: 1 }),
+  query('limit').optional().isInt({ min: 1, max: 1000 }),
+  query('activityType').optional().isIn(['search_query', 'website_check', 'report_view', 'report_submit', 'user_login', 'user_register', 'all']),
+  query('timeRange').optional().isIn(['1h', '24h', '7d', '30d', '90d', 'all'])
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const skip = (page - 1) * limit;
+    const activityType = req.query.activityType || 'all';
+    const timeRange = req.query.timeRange || '24h';
+
+    // Build query filter
+    const filter = {};
+    
+    // Filter by activity type
+    if (activityType !== 'all') {
+      filter.activityType = activityType;
+    }
+
+    // Filter by time range
+    if (timeRange !== 'all') {
+      const now = new Date();
+      let startTime;
+      
+      switch (timeRange) {
+        case '1h':
+          startTime = new Date(now.getTime() - 60 * 60 * 1000);
+          break;
+        case '24h':
+          startTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case '7d':
+          startTime = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case '30d':
+          startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case '90d':
+          startTime = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+      }
+      
+      if (startTime) {
+        filter.timestamp = { $gte: startTime };
+      }
+    }
+
+    // Execute query
+    const activities = await Activity.find(filter)
+      .populate('userId', 'username email role')
+      .sort({ timestamp: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const total = await Activity.countDocuments(filter);
+    const totalPages = Math.ceil(total / limit);
+
+    // Get activity statistics
+    const activityStats = await Activity.aggregate([
+      { $match: filter },
+      {
+        $group: {
+          _id: '$activityType',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } }
+    ]);
+
+    res.json({
+      activities,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalActivities: total,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      },
+      statistics: activityStats
+    });
+
+  } catch (error) {
+    console.error('Get activities error:', error);
+    res.status(500).json({ message: 'Server error fetching activities' });
+  }
+});
+
+// @route   DELETE /api/admin/activities/:activityId
+// @desc    Delete a user activity (admin only)
+// @access  Private (Admin)
+router.delete('/activities/:activityId', adminAuth, async (req, res) => {
+  try {
+    const { activityId } = req.params;
+
+    // Check if the activity exists
+    const activity = await Activity.findById(activityId);
+    if (!activity) {
+      return res.status(404).json({ message: 'Activity not found' });
+    }
+
+    // Delete the activity
+    await Activity.findByIdAndDelete(activityId);
+
+    res.json({ message: 'Activity deleted successfully' });
+  } catch (error) {
+    console.error('Delete activity error:', error);
+    res.status(500).json({ message: 'Server error deleting activity' });
   }
 });
 

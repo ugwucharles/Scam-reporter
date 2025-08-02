@@ -68,7 +68,7 @@ export const authAPI = {
   register: (userData: any) => api.post('/auth/register', userData),
   login: (credentials: any) => api.post('/auth/login', credentials),
   logout: () => api.post('/auth/logout'),
-  getProfile: () => api.get('/auth/profile'),
+  getProfile: () => api.get('/auth/me'),
   updateProfile: (userData: any) => api.put('/auth/profile', userData),
 };
 
@@ -186,6 +186,17 @@ export const adminAPI = {
   // Update user role
   updateUserRole: (userId: string, role: string) => 
     api.put(`/admin/users/${userId}/role`, { role }),
+  
+  // Get user activities
+  getActivities: (params?: {
+    page?: number;
+    limit?: number;
+    activityType?: string;
+    timeRange?: string;
+  }) => api.get('/admin/activities', { params }),
+  
+  // Delete activity
+  deleteActivity: (activityId: string) => api.delete(`/admin/activities/${activityId}`),
 };
 
 // Health check

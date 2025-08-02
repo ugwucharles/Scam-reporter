@@ -35,7 +35,10 @@ router.post('/', upload.array('evidence', 5), handleUploadError, [
   body('location').optional().isLength({ max: 200 }).trim(),
   body('amountLost').optional().isNumeric(),
   body('contactInfo').optional().isLength({ max: 200 }).trim(),
-  body('additionalDetails').optional().isLength({ max: 1000 }).trim()
+  body('additionalDetails').optional().isLength({ max: 1000 }).trim(),
+  body('reporterName').optional().isLength({ max: 100 }).trim(),
+  body('reporterEmail').optional().isEmail().normalizeEmail(),
+  body('reporterPhone').optional().isLength({ max: 20 }).trim()
 ], async (req, res) => {
   try {
     console.log('=== SCAM REPORT SUBMISSION ===');
@@ -85,6 +88,11 @@ router.post('/', upload.array('evidence', 5), handleUploadError, [
       },
       location: {
         city: req.body.location || ''
+      },
+      reporterInfo: {
+        name: req.body.reporterName || '',
+        email: req.body.reporterEmail || '',
+        phone: req.body.reporterPhone || ''
       },
       reporterContact: {
         allowContact: !!req.body.contactInfo,

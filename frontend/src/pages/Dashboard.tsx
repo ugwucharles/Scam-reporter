@@ -109,7 +109,7 @@ const Statistics: React.FC = () => {
         transition={{ duration: 0.5 }}
       >
         {/* Header */}
-        <Box textAlign="center" sx={{ mb: 4 }}>
+        <Box textAlign="center" sx={{ mb: 4, pt: 8 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
             <Assessment sx={{ fontSize: 40, color: 'primary.main', mr: 2 }} />
             <Typography variant="h3" fontWeight={700}>

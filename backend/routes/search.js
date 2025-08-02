@@ -2,8 +2,197 @@ const express = require('express');
 const { query, validationResult } = require('express-validator');
 const ScamReport = require('../models/ScamReport');
 const { optionalAuth } = require('../middleware/auth');
+const { logActivity } = require('../middleware/activityTracker');
 
 const router = express.Router();
+
+// Function to check if an entity should be blacklisted based on report count
+async function checkBlacklistStatus(searchCriteria) {
+  try {
+    const { q, email, phone, website, businessName } = searchCriteria;
+    const blacklistInfo = {
+      isBlacklisted: false,
+      riskLevel: 'low',
+      reportCount: 0,
+      message: '',
+      type: '',
+      entity: ''
+    };
+
+    // Check phone numbers first (highest priority)
+    if (phone) {
+      const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, '');
+      const phoneReports = await ScamReport.countDocuments({
+        'scammerInfo.phone': { 
+          $regex: cleanPhone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 
+          $options: 'i' 
+        },
+        status: { $in: ['approved', 'pending'] }
+      });
+      
+      if (phoneReports >= 5) {
+        blacklistInfo.isBlacklisted = true;
+        blacklistInfo.reportCount = phoneReports;
+        blacklistInfo.type = 'phone';
+        blacklistInfo.entity = phone;
+        
+        if (phoneReports >= 15) {
+          blacklistInfo.riskLevel = 'critical';
+          blacklistInfo.message = `⚠️ CRITICAL ALERT: This phone number (${phone}) has been reported ${phoneReports} times for scam activities and is BLACKLISTED. Do not engage with calls from this number.`;
+        } else if (phoneReports >= 10) {
+          blacklistInfo.riskLevel = 'high';
+          blacklistInfo.message = `🚨 HIGH RISK: This phone number (${phone}) has been reported ${phoneReports} times for scam activities and is on our BLACKLIST. Exercise extreme caution.`;
+        } else {
+          blacklistInfo.riskLevel = 'medium';
+          blacklistInfo.message = `⚠️ WARNING: This phone number (${phone}) has been reported ${phoneReports} times for suspicious activities. Proceed with caution.`;
+        }
+        return blacklistInfo;
+      }
+    }
+
+    // Check email addresses
+    if (email) {
+      const emailReports = await ScamReport.countDocuments({
+        'scammerInfo.email': email,
+        status: { $in: ['approved', 'pending'] }
+      });
+      
+      if (emailReports >= 5) {
+        blacklistInfo.isBlacklisted = true;
+        blacklistInfo.reportCount = emailReports;
+        blacklistInfo.type = 'email';
+        blacklistInfo.entity = email;
+        
+        if (emailReports >= 10) {
+          blacklistInfo.riskLevel = 'high';
+          blacklistInfo.message = `🚨 BLACKLISTED EMAIL: ${email} has been reported ${emailReports} times for scam activities. This email is on our BLACKLIST.`;
+        } else {
+          blacklistInfo.riskLevel = 'medium';
+          blacklistInfo.message = `⚠️ SUSPICIOUS EMAIL: ${email} has been reported ${emailReports} times. Exercise caution when dealing with this email.`;
+        }
+        return blacklistInfo;
+      }
+    }
+
+    // Check websites
+    if (website) {
+      const websiteReports = await ScamReport.countDocuments({
+        'scammerInfo.website': { $regex: website, $options: 'i' },
+        status: { $in: ['approved', 'pending'] }
+      });
+      
+      if (websiteReports >= 3) { // Lower threshold for websites
+        blacklistInfo.isBlacklisted = true;
+        blacklistInfo.reportCount = websiteReports;
+        blacklistInfo.type = 'website';
+        blacklistInfo.entity = website;
+        
+        if (websiteReports >= 8) {
+          blacklistInfo.riskLevel = 'high';
+          blacklistInfo.message = `🚨 BLACKLISTED WEBSITE: ${website} has been reported ${websiteReports} times for scam activities. Do not visit or provide information to this site.`;
+        } else {
+          blacklistInfo.riskLevel = 'medium';
+          blacklistInfo.message = `⚠️ SUSPICIOUS WEBSITE: ${website} has been reported ${websiteReports} times. Avoid this website.`;
+        }
+        return blacklistInfo;
+      }
+    }
+
+    // Check business names
+    if (businessName) {
+      const businessReports = await ScamReport.countDocuments({
+        'scammerInfo.businessName': { $regex: businessName, $options: 'i' },
+        status: { $in: ['approved', 'pending'] }
+      });
+      
+      if (businessReports >= 3) {
+        blacklistInfo.isBlacklisted = true;
+        blacklistInfo.reportCount = businessReports;
+        blacklistInfo.type = 'business';
+        blacklistInfo.entity = businessName;
+        
+        if (businessReports >= 8) {
+          blacklistInfo.riskLevel = 'high';
+          blacklistInfo.message = `🚨 BLACKLISTED BUSINESS: "${businessName}" has been reported ${businessReports} times for fraudulent activities.`;
+        } else {
+          blacklistInfo.riskLevel = 'medium';
+          blacklistInfo.message = `⚠️ SUSPICIOUS BUSINESS: "${businessName}" has been reported ${businessReports} times. Exercise caution.`;
+        }
+        return blacklistInfo;
+      }
+    }
+
+    // Check general query for phone number patterns or direct phone matches
+    if (q) {
+      // First try direct match (handles cases like "+1-555-SCAMMER")
+      const directPhoneReports = await ScamReport.countDocuments({
+        'scammerInfo.phone': q,
+        status: { $in: ['approved', 'pending'] }
+      });
+      
+      if (directPhoneReports >= 5) {
+        blacklistInfo.isBlacklisted = true;
+        blacklistInfo.reportCount = directPhoneReports;
+        blacklistInfo.type = 'phone';
+        blacklistInfo.entity = q;
+        
+        if (directPhoneReports >= 15) {
+          blacklistInfo.riskLevel = 'critical';
+          blacklistInfo.message = `⚠️ CRITICAL ALERT: This phone number (${q}) has been reported ${directPhoneReports} times for scam activities and is BLACKLISTED. Do not engage with calls from this number.`;
+        } else if (directPhoneReports >= 10) {
+          blacklistInfo.riskLevel = 'high';
+          blacklistInfo.message = `🚨 HIGH RISK: This phone number (${q}) has been reported ${directPhoneReports} times for scam activities and is on our BLACKLIST. Exercise extreme caution.`;
+        } else {
+          blacklistInfo.riskLevel = 'medium';
+          blacklistInfo.message = `⚠️ WARNING: This phone number (${q}) has been reported ${directPhoneReports} times for suspicious activities. Proceed with caution.`;
+        }
+        return blacklistInfo;
+      }
+      
+      // Then try pattern matching for numeric phone numbers
+      if (/[\+]?[\d\s\-\(\)]{7,}/.test(q)) {
+        const cleanQ = q.replace(/[\s\-\(\)\+]/g, '');
+        if (cleanQ.length >= 7) {
+          const generalPhoneReports = await ScamReport.countDocuments({
+            'scammerInfo.phone': { 
+              $regex: cleanQ.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 
+              $options: 'i' 
+            },
+            status: { $in: ['approved', 'pending'] }
+          });
+          
+          if (generalPhoneReports >= 5) {
+            blacklistInfo.isBlacklisted = true;
+            blacklistInfo.reportCount = generalPhoneReports;
+            blacklistInfo.type = 'phone';
+            blacklistInfo.entity = q;
+            
+            if (generalPhoneReports >= 10) {
+              blacklistInfo.riskLevel = 'high';
+              blacklistInfo.message = `🚨 BLACKLISTED NUMBER: ${q} has been reported ${generalPhoneReports} times for scam activities.`;
+            } else {
+              blacklistInfo.riskLevel = 'medium';
+              blacklistInfo.message = `⚠️ SUSPICIOUS NUMBER: ${q} has been reported ${generalPhoneReports} times for suspicious activities.`;
+            }
+            return blacklistInfo;
+          }
+        }
+      }
+    }
+
+    return blacklistInfo;
+  } catch (error) {
+    console.error('Error checking blacklist status:', error);
+    return {
+      isBlacklisted: false,
+      riskLevel: 'low',
+      reportCount: 0,
+      message: '',
+      type: '',
+      entity: ''
+    };
+  }
+}
 
 // @route   GET /api/search
 // @desc    Search scam reports by various criteria
@@ -48,15 +237,16 @@ router.get('/', optionalAuth, [
 
     // Text search
     if (q) {
+      const escapedQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       orConditions.push(
-        { title: { $regex: q, $options: 'i' } },
-        { description: { $regex: q, $options: 'i' } },
-        { 'scammerInfo.name': { $regex: q, $options: 'i' } },
-        { 'scammerInfo.email': { $regex: q, $options: 'i' } },
-        { 'scammerInfo.phone': { $regex: q, $options: 'i' } },
-        { 'scammerInfo.website': { $regex: q, $options: 'i' } },
-        { 'scammerInfo.businessName': { $regex: q, $options: 'i' } },
-        { tags: { $in: [new RegExp(q, 'i')] } }
+        { title: { $regex: escapedQ, $options: 'i' } },
+        { description: { $regex: escapedQ, $options: 'i' } },
+        { 'scammerInfo.name': { $regex: escapedQ, $options: 'i' } },
+        { 'scammerInfo.email': { $regex: escapedQ, $options: 'i' } },
+        { 'scammerInfo.phone': { $regex: escapedQ, $options: 'i' } },
+        { 'scammerInfo.website': { $regex: escapedQ, $options: 'i' } },
+        { 'scammerInfo.businessName': { $regex: escapedQ, $options: 'i' } },
+        { tags: { $in: [new RegExp(escapedQ, 'i')] } }
       );
     }
 
@@ -70,7 +260,7 @@ router.get('/', optionalAuth, [
       const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, '');
       orConditions.push({ 
         'scammerInfo.phone': { 
-          $regex: cleanPhone.split('').join('\\s*[\\-\\(\\)\\s]*\\+?'), 
+          $regex: cleanPhone.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 
           $options: 'i' 
         } 
       });
@@ -147,6 +337,26 @@ router.get('/', optionalAuth, [
       };
     }).sort((a, b) => b.relevanceScore - a.relevanceScore);
 
+    // Log search activity
+    await logActivity('search_query', req, {
+      query: q,
+      email,
+      phone,
+      website,
+      businessName,
+      scamType,
+      result: `${total} results found`
+    });
+
+    // Check if this is a blacklisted entity (high number of reports)
+    const blacklistInfo = await checkBlacklistStatus({
+      q,
+      email,
+      phone,
+      website,
+      businessName
+    });
+
     res.json({
       results: reportsWithScore,
       searchCriteria: {
@@ -163,7 +373,8 @@ router.get('/', optionalAuth, [
         totalResults: total,
         hasNext: parseInt(page) < totalPages,
         hasPrev: parseInt(page) > 1
-      }
+      },
+      blacklistInfo
     });
 
   } catch (error) {
