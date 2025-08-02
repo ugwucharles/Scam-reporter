@@ -47,10 +47,14 @@ router.post('/', upload.array('evidence', 5), handleUploadError, [
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('Validation errors:', errors.array());
+      console.log('=== VALIDATION ERRORS ===');
+      console.log('Request body:', JSON.stringify(req.body, null, 2));
+      console.log('Validation errors:', JSON.stringify(errors.array(), null, 2));
+      console.log('========================');
       return res.status(400).json({
         message: 'Validation failed',
-        errors: errors.array()
+        errors: errors.array(),
+        receivedData: req.body
       });
     }
 

@@ -165,11 +165,23 @@ const ReportScam: React.FC = () => {
     try {
       // Convert form data to FormData for API
       const apiFormData = new FormData();
+      console.log('=== FORM SUBMISSION DEBUG ===');
+      console.log('Original form data:', formData);
+      
       Object.entries(formData).forEach(([key, value]) => {
         if (value) { // Only append non-empty values
+          console.log(`Adding ${key}:`, value);
           apiFormData.append(key, value);
+        } else {
+          console.log(`Skipping empty ${key}`);
         }
       });
+      
+      console.log('FormData entries:');
+      Array.from(apiFormData.entries()).forEach(([key, value]) => {
+        console.log(`${key}:`, value);
+      });
+      console.log('========================');
       
       const response = await scamReportsAPI.createReport(apiFormData);
       console.log('Report submitted successfully:', response.data);
