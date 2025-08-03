@@ -187,8 +187,25 @@ const ReportScam: React.FC = () => {
       console.log('Report submitted successfully:', response.data);
       setSubmitSuccess(true);
     } catch (error: any) {
-      console.error('Submission error:', error);
-      setSubmitError(error?.message || 'An error occurred while submitting the report');
+      console.error('=== FULL SUBMISSION ERROR ===');
+      console.error('Error:', error);
+      console.error('Error message:', error?.message);
+      console.error('Error response:', error?.response);
+      console.error('Error response data:', error?.response?.data);
+      console.error('================================');
+      
+      let errorMessage = 'An error occurred while submitting the report';
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.response?.data?.errors) {
+        // Handle validation errors
+        const validationErrors = error.response.data.errors;
+        errorMessage = `Validation failed: ${validationErrors.map((err: any) => err.msg).join(', ')}`;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+      
+      setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
