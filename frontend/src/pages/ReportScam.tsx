@@ -336,7 +336,7 @@ const ReportScam: React.FC = () => {
                 accept="image/*,video/*"
                 onChange={(e) => {
                   if (e.target.files && e.target.files[0]) {
-                    handleInputChange('evidenceFile', e.target.files[0]);
+                    handleInputChange('evidence', e.target.files[0]);
                   }
                 }}
                 style={{ display: 'block', marginTop: '8px' }}
