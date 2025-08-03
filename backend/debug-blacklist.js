@@ -1,6 +1,7 @@
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 const ScamReport = require('./models/ScamReport');
 const mongoose = require('mongoose');
-require('dotenv').config();
 
 async function debugBlacklistDetection() {
   try {

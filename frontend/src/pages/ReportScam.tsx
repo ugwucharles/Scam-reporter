@@ -17,6 +17,7 @@ import {
 import { CheckCircle, Security } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { scamReportsAPI } from '../services/api';
+import ReCaptcha from '../components/ReCaptcha';
 
 const ReportScam: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -42,6 +43,8 @@ const ReportScam: React.FC = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [submitError, setSubmitError] = useState('');
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const [recaptchaError, setRecaptchaError] = useState<string>('');
 
   // Common input styles for light theme
   const inputStyles = {
@@ -148,6 +151,14 @@ const ReportScam: React.FC = () => {
       isValid = false;
     }
 
+    // Validate reCAPTCHA
+    if (!recaptchaToken) {
+      setRecaptchaError('Please complete the reCAPTCHA verification');
+      isValid = false;
+    } else {
+      setRecaptchaError('');
+    }
+
     setErrors(newErrors);
     return isValid;
   };
@@ -176,6 +187,12 @@ const ReportScam: React.FC = () => {
           console.log(`Skipping empty ${key}`);
         }
       });
+      
+      // Add reCAPTCHA token
+      if (recaptchaToken) {
+        apiFormData.append('recaptchaToken', recaptchaToken);
+        console.log('Adding reCAPTCHA token:', recaptchaToken);
+      }
       
       console.log('FormData entries:');
       Array.from(apiFormData.entries()).forEach(([key, value]) => {
@@ -498,6 +515,15 @@ const ReportScam: React.FC = () => {
               helperText="Any other information that might be helpful"
               variant="standard"
               sx={inputStyles}
+            />
+
+            <Divider sx={{ my: 2 }} />
+
+            {/* reCAPTCHA Verification */}
+            <ReCaptcha
+              onVerify={setRecaptchaToken}
+              error={recaptchaError}
+              required={true}
             />
 
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>

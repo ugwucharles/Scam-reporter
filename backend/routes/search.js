@@ -230,9 +230,8 @@ router.get('/', optionalAuth, [
       limit = 10
     } = req.query;
 
-    // Build search query
-    // Temporarily include all statuses for testing
-    const searchQuery = { status: { $in: ['approved', 'pending'] } };
+    // Build search query - STRICT: Only show approved reports in search results
+    const searchQuery = { status: 'approved' };
     const orConditions = [];
 
     // Text search

@@ -6,6 +6,7 @@ A modern, sleek web application for reporting and searching scam activities. Bui
 
 - **Advanced Search**: Search scam database by email, phone, website, or business name
 - **Report Scams**: Submit detailed scam reports with evidence
+- **Bot Protection**: Google reCAPTCHA integration to prevent spam and malicious submissions
 - **User Authentication**: Secure login and registration system
 - **Admin Dashboard**: Moderation tools for administrators
 - **Responsive Design**: Mobile-first, responsive UI
@@ -59,6 +60,7 @@ PORT=5000
 MONGODB_URI=mongodb://localhost:27017/scam-reporter
 JWT_SECRET=your_super_secure_jwt_secret_key_here
 NODE_ENV=development
+RECAPTCHA_SECRET_KEY=your_recaptcha_secret_key_here
 ```
 
 ### 3. Frontend Setup
@@ -70,10 +72,22 @@ npm install --legacy-peer-deps
 Create a `.env` file in the frontend directory:
 ```env
 REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_RECAPTCHA_SITE_KEY=your_recaptcha_site_key_here
 ```
 
 ### 4. Database Setup
 Make sure MongoDB is running on your system. The application will automatically create the database and collections on first run.
+
+### 5. reCAPTCHA Setup
+To enable bot protection, you need to set up Google reCAPTCHA:
+
+1. Go to [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin)
+2. Create a new site with reCAPTCHA v2
+3. Add your domains (localhost for development)
+4. Copy the Site Key and Secret Key
+5. Add them to your `.env` files as shown above
+
+For detailed setup instructions, see [RECAPTCHA_SETUP.md](./RECAPTCHA_SETUP.md).
 
 ## Running the Application
 

@@ -4,13 +4,14 @@ const ScamReport = require('../models/ScamReport');
 const User = require('../models/User');
 const { auth, optionalAuth, adminAuth } = require('../middleware/auth');
 const { upload, handleUploadError } = require('../middleware/upload');
+const { verifyRecaptcha } = require('../middleware/recaptcha');
 
 const router = express.Router();
 
 // @route   POST /api/scams
 // @desc    Create a new scam report with file uploads
 // @access  Public
-router.post('/', upload.array('evidence', 5), handleUploadError, [
+router.post('/', upload.array('evidence', 5), handleUploadError, verifyRecaptcha, [
   body('title').isLength({ min: 5, max: 200 }).trim().escape(),
   body('description').isLength({ min: 20, max: 2000 }).trim(),
   body('scamType').isIn([
