@@ -272,26 +272,47 @@ const Search: React.FC = () => {
                   variant="filled"
                   sx={{ 
                     mb: 3,
-                    backgroundColor: 
-                      blacklistInfo.riskLevel === 'critical' ? '#d32f2f' :
-                      blacklistInfo.riskLevel === 'high' ? '#f57c00' :
-                      blacklistInfo.riskLevel === 'medium' ? '#ff9800' : '#2196f3',
+backgroundColor: 'black',
                     color: 'white',
                     fontWeight: 600,
                     fontSize: '1rem',
                     '& .MuiAlert-icon': {
-                      fontSize: '2rem'
+                      fontSize: '2rem',
+                      color: 'white'
                     }
                   }}
                 >
                   <Box>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-                      {blacklistInfo.riskLevel === 'critical' && '🚨 CRITICAL BLACKLIST ALERT'}
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1, color: 'white' }}>
+                      {blacklistInfo.riskLevel === 'critical' && (
+                        <Box
+                          component="span"
+                          sx={{
+                            animation: 'textPulse 1.2s infinite',
+                            '@keyframes textPulse': {
+                              '0%': {
+                                textShadow: '0 0 5px #ffffff, 0 0 10px #ff0000',
+                                transform: 'scale(1)'
+                              },
+                              '50%': {
+                                textShadow: '0 0 10px #ffffff, 0 0 20px #ff0000, 0 0 30px #ff4444',
+                                transform: 'scale(1.02)'
+                              },
+                              '100%': {
+                                textShadow: '0 0 5px #ffffff, 0 0 10px #ff0000',
+                                transform: 'scale(1)'
+                              }
+                            }
+                          }}
+                        >
+                          CRITICAL BLACKLIST ALERT
+                        </Box>
+                      )}
                       {blacklistInfo.riskLevel === 'high' && '⚠️ HIGH RISK BLACKLIST WARNING'}
                       {blacklistInfo.riskLevel === 'medium' && '⚠️ BLACKLIST WARNING'}
                       {blacklistInfo.riskLevel === 'low' && 'ℹ️ NOTICE'}
                     </Typography>
-                    <Typography variant="body1" sx={{ mb: 1 }}>
+                    <Typography variant="body1" sx={{ mb: 1, color: 'white' }}>
                       {blacklistInfo.message}
                     </Typography>
                     <Box sx={{ 
@@ -301,19 +322,19 @@ const Search: React.FC = () => {
                       borderRadius: 1,
                       border: '1px solid rgba(255, 255, 255, 0.2)'
                     }}>
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600, color: 'white' }}>
                         📊 Blacklist Details:
                       </Typography>
-                      <Typography variant="body2">
+                      <Typography variant="body2" sx={{ color: 'white' }}>
                         • Entity: {blacklistInfo.entity}
                       </Typography>
-                      <Typography variant="body2">
+                      <Typography variant="body2" sx={{ color: 'white' }}>
                         • Type: {blacklistInfo.type.charAt(0).toUpperCase() + blacklistInfo.type.slice(1)}
                       </Typography>
-                      <Typography variant="body2">
+                      <Typography variant="body2" sx={{ color: 'white' }}>
                         • Total Reports: {blacklistInfo.reportCount}
                       </Typography>
-                      <Typography variant="body2">
+                      <Typography variant="body2" sx={{ color: 'white' }}>
                         • Risk Level: {blacklistInfo.riskLevel.toUpperCase()}
                       </Typography>
                     </Box>

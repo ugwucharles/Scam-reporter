@@ -39,7 +39,7 @@ export interface Location {
 }
 
 export interface Evidence {
-  type: 'screenshot' | 'document' | 'email' | 'text_message' | 'other';
+  type: 'screenshot' | 'document' | 'email' | 'text_message' | 'video' | 'other';
   filename?: string;
   url?: string;
   description?: string;

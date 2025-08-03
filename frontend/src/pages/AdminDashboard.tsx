@@ -4,7 +4,6 @@ import {
   Container,
   Paper,
   Typography,
-  Grid,
   Card,
   CardContent,
   Button,
@@ -44,12 +43,15 @@ import {
   Assessment,
   Settings,
   Search,
-  FilterList,
   MoreVert,
-  TrendingUp,
-  Warning,
   Security,
   Delete,
+  AttachFile,
+  VideoFile,
+  Description,
+  Email,
+  Sms,
+  DownloadForOffline,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -707,12 +709,23 @@ const AdminDashboard: React.FC = () => {
             <Tabs
               value={currentTab}
               onChange={handleTabChange}
+              variant="scrollable"
+              scrollButtons="auto"
+              allowScrollButtonsMobile
               sx={{
                 borderBottom: 1,
                 borderColor: 'divider',
                 '& .MuiTab-root': {
                   textTransform: 'none',
                   fontWeight: 600,
+                  minWidth: { xs: 'auto', sm: 160 },
+                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                  px: { xs: 1, sm: 2 }
+                },
+                '& .MuiTabs-scrollButtons': {
+                  '&.Mui-disabled': {
+                    opacity: 0.3,
+                  },
                 },
               }}
             >
@@ -737,10 +750,14 @@ const AdminDashboard: React.FC = () => {
                   display: 'grid', 
                   gridTemplateColumns: { 
                     xs: '1fr', 
-                    sm: 'repeat(auto-fill, minmax(300px, 1fr))', 
-                    md: 'repeat(auto-fill, minmax(350px, 1fr))' 
+                    sm: 'repeat(auto-fit, minmax(260px, 1fr))', 
+                    md: 'repeat(auto-fit, minmax(300px, 1fr))', 
+                    lg: 'repeat(auto-fit, minmax(350px, 1fr))' 
                   }, 
-                  gap: { xs: 2, md: 3 }
+                  gap: { xs: 1.5, sm: 2, md: 3 },
+                  width: '100%',
+                  overflowX: 'hidden',
+                  px: 0 // Remove any padding that might cause overflow
                 }}>
                   {(pendingReports as ScamReport[])?.map((report: ScamReport) => (
                     <Box key={report._id}>
@@ -749,6 +766,8 @@ const AdminDashboard: React.FC = () => {
                           height: '100%',
                           display: 'flex',
                           flexDirection: 'column',
+                          minWidth: 0, // Allow shrinking
+                          maxWidth: '100%', // Prevent overflow
                           '&:hover': {
                             boxShadow: 4,
                           },
@@ -771,10 +790,35 @@ const AdminDashboard: React.FC = () => {
                               color={getStatusColor(report.status) as any}
                             />
                           </Box>
-                          <Typography variant="h6" fontWeight="bold" gutterBottom>
+                          <Typography 
+                            variant="h6" 
+                            fontWeight="bold" 
+                            gutterBottom
+                            sx={{
+                              wordBreak: 'break-word',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              fontSize: { xs: '1rem', sm: '1.25rem' }
+                            }}
+                          >
                             {report.title}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                          <Typography 
+                            variant="body2" 
+                            color="text.secondary" 
+                            sx={{ 
+                              mb: 2,
+                              wordBreak: 'break-word',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical'
+                            }}
+                          >
                             {report.description.substring(0, 150)}...
                           </Typography>
                           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -788,6 +832,112 @@ const AdminDashboard: React.FC = () => {
                           <Typography variant="caption" color="text.secondary">
                             Submitted: {format(new Date(report.createdAt), 'PPp')}
                           </Typography>
+                          
+                          {/* Evidence Section */}
+                          {report.evidence && report.evidence.length > 0 && (
+                            <Box sx={{ mt: 2 }}>
+                              <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                                Evidence ({report.evidence.length})
+                              </Typography>
+                              <Box sx={{ 
+                                display: 'flex', 
+                                flexWrap: 'wrap', 
+                                gap: 1,
+                                maxHeight: 120,
+                                overflowY: 'auto'
+                              }}>
+                                {report.evidence.map((evidence, index) => (
+                                  <Box key={index} sx={{ 
+                                    position: 'relative',
+                                    minWidth: 60,
+                                    maxWidth: 100
+                                  }}>
+                                    {evidence.type === 'screenshot' || evidence.type === 'document' ? (
+                                      evidence.url ? (
+                                        <Box sx={{
+                                          width: 80,
+                                          height: 60,
+                                          border: '1px solid #ddd',
+                                          borderRadius: 1,
+                                          overflow: 'hidden',
+                                          position: 'relative',
+                                          cursor: 'pointer',
+                                          '&:hover': {
+                                            opacity: 0.8
+                                          }
+                                        }}>
+                                          <img 
+                                            src={evidence.url}
+                                            alt={evidence.description || 'Evidence'}
+                                            style={{
+                                              width: '100%',
+                                              height: '100%',
+                                              objectFit: 'cover'
+                                            }}
+                                            onError={(e) => {
+                                              const target = e.target as HTMLImageElement;
+target.style.display = 'none';
+                                              const parent = target.parentElement;
+                                              if (parent) {
+                                                const fallback = document.createElement('div');
+                                                fallback.style.cssText = 'display: flex; align-items: center; justify-content: center; height: 100%; background: #f5f5f5; color: #666; font-size: 12px; text-align: center; padding: 4px;';
+                                                fallback.innerHTML = `
+                                                  <div>
+                                                    <div style="margin-bottom: 4px;">📎</div>
+                                                    <div>${evidence.filename || 'File'}</div>
+                                                  </div>
+                                                `;
+                                                parent.appendChild(fallback);
+                                              }
+                                            }}
+                                          />
+                                        </Box>
+                                      ) : (
+                                        <Box sx={{
+                                          width: 80,
+                                          height: 60,
+                                          border: '1px solid #ddd',
+                                          borderRadius: 1,
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          backgroundColor: '#f5f5f5',
+                                          flexDirection: 'column',
+                                          cursor: 'pointer'
+                                        }}>
+                                          <AttachFile sx={{ fontSize: 16, color: '#666', mb: 0.5 }} />
+                                          <Typography variant="caption" sx={{ fontSize: '0.6rem', color: '#666', textAlign: 'center' }}>
+                                            {evidence.filename || 'File'}
+                                          </Typography>
+                                        </Box>
+                                      )
+                                    ) : (
+                                      <Box sx={{
+                                        width: 80,
+                                        height: 60,
+                                        border: '1px solid #ddd',
+                                        borderRadius: 1,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: '#f5f5f5',
+                                        flexDirection: 'column',
+                                        cursor: 'pointer'
+                                      }}>
+                                        {evidence.type === 'video' && <VideoFile sx={{ fontSize: 16, color: '#666', mb: 0.5 }} />}
+                                        {evidence.type === 'email' && <Email sx={{ fontSize: 16, color: '#666', mb: 0.5 }} />}
+                                        {evidence.type === 'text_message' && <Sms sx={{ fontSize: 16, color: '#666', mb: 0.5 }} />}
+                                        {evidence.type === 'other' && <Description sx={{ fontSize: 16, color: '#666', mb: 0.5 }} />}
+                                        <Typography variant="caption" sx={{ fontSize: '0.6rem', color: '#666', textAlign: 'center' }}>
+                                          {evidence.type.replace('_', ' ')}
+                                        </Typography>
+                                      </Box>
+                                    )}
+                                  </Box>
+                                ))}
+                              </Box>
+                            </Box>
+                          )}
                         </CardContent>
                         <Box sx={{ p: 2, pt: 0 }}>
                             <Box sx={{ 
@@ -1008,12 +1158,13 @@ fullScreen={false}
           </Typography>
         </DialogTitle>
         <DialogContent>
-          {selectedReport && (
-            <Box sx={{ py: 2 }}>
+{selectedReport && (
+            <Box sx={{ py: 2, overflow: 'hidden' }}>
               <Box sx={{ 
                 display: 'flex', 
                 flexDirection: 'column', 
-                gap: { xs: 2, md: 3 } 
+                gap: { xs: 2, md: 3 },
+                overflow: 'hidden'
               }}>
                 <Box sx={{ 
                   display: 'flex', 
@@ -1021,15 +1172,6 @@ fullScreen={false}
                   flexWrap: 'wrap',
                   flexDirection: { xs: 'column', sm: 'row' }
                 }}>
-                  <Box>
-                    <Typography variant="subtitle2" gutterBottom>
-                      Current Status
-                    </Typography>
-                    <Chip
-                      label={selectedReport.status}
-                      color={getStatusColor(selectedReport.status) as any}
-                    />
-                  </Box>
                   <Box>
                     <Typography variant="subtitle2" gutterBottom>
                       Scam Type
@@ -1047,10 +1189,179 @@ fullScreen={false}
                   <Typography variant="subtitle2" gutterBottom>
                     Description
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {selectedReport.description}
-                  </Typography>
+                  <Box sx={{
+                    maxHeight: 200,
+                    overflowY: 'auto',
+                    border: '1px solid #e0e0e0',
+                    borderRadius: 1,
+                    p: 2,
+                    backgroundColor: '#fafafa'
+                  }}>
+                    <Typography variant="body2" color="text.secondary" sx={{
+                      wordBreak: 'break-word',
+                      whiteSpace: 'pre-wrap',
+                      lineHeight: 1.5
+                    }}>
+                      {selectedReport.description}
+                    </Typography>
+                  </Box>
                 </Box>
+                
+                {/* Evidence Section in Dialog */}
+                {selectedReport.evidence && selectedReport.evidence.length > 0 && (
+                  <Box>
+                    <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold' }}>
+                      Evidence ({selectedReport.evidence.length} files)
+                    </Typography>
+                    <Box sx={{ 
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                      gap: 2,
+                      maxHeight: 400,
+                      overflowY: 'auto',
+                      border: '1px solid #e0e0e0',
+                      borderRadius: 1,
+                      p: 2
+                    }}>
+                      {selectedReport.evidence.map((evidence, index) => (
+                        <Box key={index} sx={{ 
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: 1
+                        }}>
+                          {evidence.type === 'screenshot' || evidence.type === 'document' ? (
+                            evidence.url ? (
+                              <Box sx={{
+                                width: '100%',
+                                maxWidth: 150,
+                                height: 100,
+                                border: '1px solid #ddd',
+                                borderRadius: 1,
+                                overflow: 'hidden',
+                                position: 'relative',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                  boxShadow: 2
+                                },
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#f5f5f5'
+                              }}>
+                                <img 
+                                  src={evidence.url}
+                                  alt={evidence.description || 'Evidence'}
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover'
+                                  }}
+                                  onClick={() => window.open(evidence.url, '_blank')}
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    const parent = target.parentElement;
+                                    if (parent) {
+                                      target.style.display = 'none';
+                                      // Create fallback content
+                                      const fallback = document.createElement('div');
+                                      fallback.style.cssText = 'display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #666; font-size: 12px; text-align: center; padding: 8px;';
+                                      fallback.innerHTML = `
+                                        <div style="font-size: 20px; margin-bottom: 4px;">📄</div>
+                                        <div>${evidence.filename || evidence.type}</div>
+                                      `;
+                                      parent.appendChild(fallback);
+                                    }
+                                  }}
+                                />
+                              </Box>
+                            ) : (
+                              <Box sx={{
+                                width: '100%',
+                                maxWidth: 150,
+                                height: 100,
+                                border: '1px solid #ddd',
+                                borderRadius: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#f5f5f5',
+                                flexDirection: 'column',
+                                cursor: 'pointer'
+                              }}>
+                                <AttachFile sx={{ fontSize: 24, color: '#666', mb: 1 }} />
+                                <Typography variant="caption" sx={{ color: '#666', textAlign: 'center', fontSize: '0.65rem' }}>
+                                  {evidence.filename || 'No File'}
+                                </Typography>
+                              </Box>
+                            )
+                          ) : (
+                            <Box sx={{
+                              width: '100%',
+                              maxWidth: 150,
+                              height: 100,
+                              border: '1px solid #ddd',
+                              borderRadius: 1,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              backgroundColor: '#f5f5f5',
+                              flexDirection: 'column',
+                              cursor: evidence.url ? 'pointer' : 'default'
+                            }}
+                            onClick={evidence.url ? () => window.open(evidence.url, '_blank') : undefined}
+                            >
+                              {evidence.type === 'video' && <VideoFile sx={{ fontSize: 24, color: '#666', mb: 1 }} />}
+                              {evidence.type === 'email' && <Email sx={{ fontSize: 24, color: '#666', mb: 1 }} />}
+                              {evidence.type === 'text_message' && <Sms sx={{ fontSize: 24, color: '#666', mb: 1 }} />}
+                              {evidence.type === 'other' && <Description sx={{ fontSize: 24, color: '#666', mb: 1 }} />}
+                              <Typography variant="caption" sx={{ color: '#666', textAlign: 'center', textTransform: 'capitalize', fontSize: '0.65rem' }}>
+                                {evidence.filename || evidence.type.replace('_', ' ')}
+                              </Typography>
+                            </Box>
+                          )}
+                          
+                          <Box sx={{ textAlign: 'center', width: '100%' }}>
+                            <Typography variant="caption" sx={{ 
+                              display: 'block',
+                              fontWeight: 'medium',
+                              color: 'text.primary',
+                              wordBreak: 'break-word'
+                            }}>
+                              {evidence.filename || `${evidence.type}.file`}
+                            </Typography>
+                            {evidence.description && (
+                              <Typography variant="caption" sx={{ 
+                                display: 'block',
+                                color: 'text.secondary',
+                                mt: 0.5,
+                                fontStyle: 'italic',
+                                wordBreak: 'break-word'
+                              }}>
+                                {evidence.description}
+                              </Typography>
+                            )}
+                            {evidence.url && (
+                              <Button
+                                size="small"
+                                startIcon={<DownloadForOffline />}
+                                onClick={() => window.open(evidence.url, '_blank')}
+                                sx={{ 
+                                  mt: 0.5,
+                                  fontSize: '0.7rem',
+                                  minWidth: 'auto',
+                                  px: 1
+                                }}
+                              >
+                                View
+                              </Button>
+                            )}
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                )}
                 <FormControl fullWidth>
                   <InputLabel>New Status</InputLabel>
                   <Select
@@ -1063,15 +1374,6 @@ fullScreen={false}
                     <MenuItem value="under_review">Under Review</MenuItem>
                   </Select>
                 </FormControl>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={4}
-                  label="Moderation Notes"
-                  value={moderationNotes}
-                  onChange={(e) => setModerationNotes(e.target.value)}
-                  placeholder="Add notes about your moderation decision..."
-                />
               </Box>
             </Box>
           )}
