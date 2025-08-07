@@ -2,7 +2,7 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/build",
-  "installCommand": "npm run install-all",
+  "installCommand": "cd frontend && npm install",
   "framework": "create-react-app",
   "functions": {
     "backend/server.js": {
