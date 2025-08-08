@@ -40,18 +40,7 @@ interface BlacklistInfo {
   entity: string;
 }
 
-interface SearchResponse {
-  results: SearchResult[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalResults: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-  query: string;
-  blacklistInfo?: BlacklistInfo;
-}
+
 
 interface PaginationInfo {
   currentPage: number;
