@@ -4,7 +4,6 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const path = require('path');
-const { RecaptchaV3 } = require('express-recaptcha');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
@@ -43,11 +42,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// reCAPTCHA setup
-const recaptcha = new RecaptchaV3(process.env.RECAPTCHA_SITE_KEY, process.env.RECAPTCHA_SECRET_KEY);
-
-// Routes
-app.use('/api/auth', recaptcha.middleware.verify, authRoutes);
+// Routes (reCAPTCHA verification is handled in individual route middlewares)
+app.use('/api/auth', authRoutes);
 app.use('/api/scams', scamRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/website-checker', websiteCheckerRoutes);
