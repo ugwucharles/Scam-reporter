@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A web application for reporting and searching scam activities",
   "scripts": {
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "build": "cd frontend && npm run build",
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\"",
     "start": "cd frontend && npm start"
