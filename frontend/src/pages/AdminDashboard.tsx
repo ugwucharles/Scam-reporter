@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
   Table,
   TableBody,
   TableCell,
@@ -404,7 +403,7 @@ const AdminDashboard: React.FC = () => {
   const queryClient = useQueryClient();
 
   // Fetch all reports (including pending ones for admin)
-  const { data: reportsData, isLoading: reportsLoading } = useQuery({
+  const { data: reportsData } = useQuery({
     queryKey: ['admin-all-reports', page, rowsPerPage, statusFilter],
     queryFn: async () => {
       const response = await adminAPI.getAllReports({

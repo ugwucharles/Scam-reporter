@@ -24,7 +24,7 @@ import {
 import { motion } from 'framer-motion';
 import { searchAPI } from '../services/api';
 
-interface Statistics {
+interface StatisticsData {
   reportsByStatus: Array<{ _id: string; count: number }>;
   reportsByType: Array<{ _id: string; count: number }>;
   topReportedWebsites: Array<{ _id: string; count: number }>;
@@ -37,7 +37,7 @@ interface Statistics {
 }
 
 const Statistics: React.FC = () => {
-  const [stats, setStats] = useState<Statistics | null>(null);
+  const [stats, setStats] = useState<StatisticsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 

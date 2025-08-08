@@ -7,18 +7,12 @@ import {
   Stack,
   Card,
   CircularProgress,
-  Chip,
 } from '@mui/material';
 import {
   ReportProblem,
   Search,
   TrendingUp,
   ArrowForward,
-  Shield,
-  VerifiedUser,
-  Warning,
-  AutoGraph,
-  Psychology,
   Verified,
   KeyboardArrowRight,
 } from '@mui/icons-material';
@@ -51,26 +45,7 @@ const Home: React.FC = () => {
     }
   };
 
-  const features = [
-    {
-      icon: <ReportProblem sx={{ fontSize: 40, color: '#6366f1' }} />,
-      title: 'Report Scams',
-      description: 'Quickly report suspicious activities and help protect others from fraud.',
-      link: '/report'
-    },
-    {
-      icon: <Search sx={{ fontSize: 40, color: '#8b5cf6' }} />,
-      title: 'Search Database',
-      description: 'Search our comprehensive database of reported scams and fraudulent activities.',
-      link: '/search'
-    },
-    {
-      icon: <TrendingUp sx={{ fontSize: 40, color: '#06b6d4' }} />,
-      title: 'Track Trends',
-      description: 'Monitor fraud trends and stay informed about the latest scam techniques.',
-      link: '/dashboard'
-    },
-  ];
+
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>

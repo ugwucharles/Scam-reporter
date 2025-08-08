@@ -24,7 +24,7 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { isAuthenticated, user, logout } = useAuth();
+  const {} = useAuth();
 
   // Apple's exact navigation items
   const navItems = [
