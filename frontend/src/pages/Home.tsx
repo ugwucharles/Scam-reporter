@@ -20,43 +20,17 @@ import {
   AutoGraph,
   Psychology,
   Verified,
-  Speed,
   KeyboardArrowRight,
 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { keyframes } from '@mui/system';
+import { motion } from 'framer-motion';
 import { websiteCheckerAPI } from '../services/api';
 import WebsiteCheckerResult from '../components/WebsiteCheckerResult';
-
-const floatAnimation = keyframes`
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
-`;
 
 const Home: React.FC = () => {
   const [websiteUrl, setWebsiteUrl] = useState<string>('');
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const [checkResult, setCheckResult] = useState<any>(null);
-  const [currentMetricIndex, setCurrentMetricIndex] = useState(0);
-  const [isAIProcessing, setIsAIProcessing] = useState(false);
-
-  // Real-time metrics rotation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentMetricIndex((prev) => (prev + 1) % 4);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Simulate AI processing
-  useEffect(() => {
-    const processingInterval = setInterval(() => {
-      setIsAIProcessing(prev => !prev);
-    }, 4000);
-    return () => clearInterval(processingInterval);
-  }, []);
 
   const handleWebsiteCheck = async () => {
     if (!websiteUrl.trim()) return;

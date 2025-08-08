@@ -11,10 +11,8 @@ import {
   CircularProgress,
   Alert,
   Pagination,
-  InputAdornment,
-  Paper,
 } from '@mui/material';
-import { Search as SearchIcon, Clear as ClearIcon } from '@mui/icons-material';
+import { Search as SearchIcon } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { scamReportsAPI } from '../services/api';
 
